@@ -15,23 +15,44 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="add-habit-page">
-    <div class="modal-overlay active">
+    <!-- Edit Habit Modal -->
+    <div class="modal-overlay active" id="edit-habit-modal">
       <div class="modal">
         <h1 class="page-title">Edit Habit</h1>
         <input type="text" class="input-field" placeholder="Edit Habit Name" />
-
         <select class="input-field">
           <option>Daily</option>
           <option>Weekly</option>
           <option>Monthly</option>
         </select>
-
         <div class="modal-buttons">
-          <button class="delete-btn">Delete</button>
+          <button
+            class="delete-btn"
+            onclick="document.getElementById('edit-habit-modal').classList.remove('active'); document.getElementById('delete-habit-modal').classList.add('active')"
+          >
+            Delete
+          </button>
           <div class="modal-buttons-right">
             <button class="cancel-btn">Cancel</button>
             <button class="add-habit-btn">Save</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Habit Confirmation Modal -->
+    <div class="modal-overlay" id="delete-habit-modal">
+      <div class="modal">
+        <h2 class="page-title">Delete Habit?</h2>
+        <p class="page-subtitle">This cannot be undone.</p>
+        <div class="modal-buttons">
+          <button
+            class="cancel-btn"
+            onclick="document.getElementById('delete-habit-modal').classList.remove('active'); document.getElementById('edit-habit-modal').classList.add('active')"
+          >
+            Cancel
+          </button>
+          <button class="delete-btn">Delete</button>
         </div>
       </div>
     </div>
