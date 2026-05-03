@@ -371,7 +371,6 @@ button:hover {
   height: 100%;
   width: 60%;
 }
-
 /* || LEADERBOARD PAGE */
 
 .leaderboard-page {
@@ -385,6 +384,19 @@ button:hover {
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-top: 16px;
+}
+
+/* Sections (NEW) */
+.leaderboard-section {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Title (NEW replacement for leaderboard-title) */
+.leaderboard-title {
+  font-size: 10px;
+  margin-bottom: 12px;
+  color: #5e4b43;
 }
 
 /* Leaderboard list */
@@ -450,12 +462,6 @@ button:hover {
   background-color: #fffdfb;
   border: 2px solid #e8d8cc;
   padding: 12px;
-}
-
-.activity-title {
-  font-size: 10px;
-  margin-bottom: 12px;
-  color: #5e4b43;
 }
 
 /* Activity items */
