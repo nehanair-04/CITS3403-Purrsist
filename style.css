@@ -130,9 +130,11 @@ button:hover {
   border: 2px solid #e8d8cc;
   margin: 16px auto;
   padding: 24px;
-  max-width: 400px;
+  max-width: 900px;
   width: 100%;
   text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .habit-card {
@@ -205,6 +207,8 @@ button:hover {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  padding: 0;
+  margin: 0;
 }
 
 .login-title {
@@ -238,6 +242,10 @@ button:hover {
   background-color: #fff8f5;
 }
 
+.cat-shelter-page .card {
+  min-height: 100vh;
+}
+
 /* Titles */
 
 .page-title {
@@ -262,14 +270,14 @@ button:hover {
 /* Cat slot */
 
 .cat-slot {
-  padding: 8px;
+  padding: 6px;
   border-radius: 8px;
   text-align: center;
-
   background-color: #fffdfb;
   border: 2px solid #d8b49a;
+  max-width: auto;
+  margin: 0 auto;
 }
-
 /* Modifier */
 
 .cat-slot:hover {
@@ -326,8 +334,9 @@ button:hover {
 }
 
 .cat-image-placeholder img {
-  width: 100%;
-  height: auto;
+  width: 140px;
+  height: 150px;
+  object-fit: cover;
   border-radius: 4px;
 }
 
@@ -377,19 +386,27 @@ button:hover {
   background-color: #fff9f3;
 }
 
-/* Layout */
+.leaderboard-page .card {
+  min-height: 100vh;
+}
 
+/* Layout */
 .leaderboard-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-top: 16px;
+  flex: 1;
 }
 
-/* Sections (NEW) */
 .leaderboard-section {
   display: flex;
   flex-direction: column;
+}
+
+.leaderboard-list,
+.activity-feed {
+  height: 80vh;
 }
 
 /* Title (NEW replacement for leaderboard-title) */
@@ -397,14 +414,6 @@ button:hover {
   font-size: 10px;
   margin-bottom: 12px;
   color: #5e4b43;
-}
-
-/* Leaderboard list */
-
-.leaderboard-list {
-  background-color: #fffdfb;
-  border: 2px solid #e8d8cc;
-  padding: 12px;
 }
 
 /* Entry */
