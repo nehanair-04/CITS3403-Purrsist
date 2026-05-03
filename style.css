@@ -164,7 +164,6 @@ button:hover {
 }
 
 /* || MODALS */
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -172,7 +171,6 @@ button:hover {
   width: 100%;
   height: 100%;
   background-color: rgba(232, 216, 204, 0.7);
-
   display: none;
   justify-content: center;
   align-items: center;
@@ -185,9 +183,11 @@ button:hover {
 .modal {
   background-color: #fff3e8;
   border: 2px solid #e8d8cc;
-  max-width: 400px;
-  width: 100%;
-  padding: 16px;
+  max-width: 500px;
+  width: 50%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal input,
@@ -200,13 +200,69 @@ button:hover {
   font-family: inherit;
 }
 
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.modal-buttons-right {
+  display: flex;
+  gap: 8px;
+}
+
+.add-habit-btn {
+  width: auto;
+  background-color: #f7b7a3;
+  color: white;
+  border: 2px solid #e8d8cc;
+  padding: 8px 12px;
+}
+
+.add-habit-btn:hover {
+  background-color: #f3a48e;
+}
+
+.cancel-btn {
+  width: auto;
+  background-color: transparent;
+  color: #5e4b43;
+  border: 2px solid #e8d8cc;
+  padding: 8px 12px;
+}
+
+.cancel-btn:hover {
+  background-color: #f0e0d6;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.delete-btn {
+  width: auto;
+  background-color: #c0392b;
+  color: white;
+  border: 2px solid #942d22;
+  font-size: 10px;
+}
+
+.delete-btn:hover {
+  background-color: #e74c3c;
+}
+
 /* || LOGIN/REGISTER */
 
 .login-page {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: auto;
   padding: 0;
   margin: 0;
 }
@@ -243,7 +299,7 @@ button:hover {
 }
 
 .cat-shelter-page .card {
-  min-height: 100vh;
+  min-height: auto;
 }
 
 /* Titles */
@@ -255,7 +311,7 @@ button:hover {
 
 .page-subtitle {
   color: #8a746a;
-  font-size: 10px;
+  font-size: 12px;
   margin-bottom: 20px;
 }
 
@@ -387,7 +443,7 @@ button:hover {
 }
 
 .leaderboard-page .card {
-  min-height: 100vh;
+  min-height: auto;
 }
 
 /* Layout */
@@ -406,7 +462,7 @@ button:hover {
 
 .leaderboard-list,
 .activity-feed {
-  height: 80vh;
+  min-height: auto;
 }
 
 /* Title (NEW replacement for leaderboard-title) */
@@ -734,6 +790,58 @@ button:hover {
 .friend-name {
   font-size: 8px;
   color: #5e4b43;
+}
+
+/* || HABIT DASHBOARD PAGE */
+
+.habit-dashboard-page .card {
+  min-height: auto;
+  text-align: left;
+  font-size: 12px;
+}
+
+.habit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.habit-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fffdf9;
+  border: 2px solid #e8d8cc;
+  padding: 12px;
+}
+
+.habit-text {
+  font-size: 12px;
+  margin: 0;
+}
+
+.complete-btn {
+  width: auto;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.progress-section {
+  margin-bottom: 16px;
+}
+
+.progress-label {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.next-reward {
+  background-color: #fff0c9;
+  border: 2px solid #e8d8cc;
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
 }
 
 /* || RESPONSIVE */
