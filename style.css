@@ -79,6 +79,33 @@ body {
   border-bottom: 2px solid #5e4b43;
 }
 
+/* Logout Button */
+
+.logout-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-decoration: none;
+  color: #5e4b43;
+
+  font-size: 8px;
+}
+
+.logout-btn i {
+  font-size: 18px;
+  margin-bottom: 4px;
+  transition: transform 0.1s;
+}
+
+.logout-btn:hover i {
+  transform: translateY(-2px);
+}
+
+.logout-btn:hover {
+  text-decoration: underline;
+}
+
 /* || BUTTONS */
 
 button {
@@ -585,6 +612,113 @@ button:hover {
 
 .history-day.today {
   border: 2px solid #c88ea7;
+}
+
+/* || HABIT MANAGER PAGE */
+
+.habit-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-btn {
+  width: auto;
+  padding: 6px 10px;
+}
+
+/* || PROFILE PAGE */
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* fills the box nicely */
+  display: block;
+}
+
+/* || FRIENDS PROFILE PAGE */
+
+.friends-page {
+  background-color: #fff9f3;
+}
+
+/* Section titles (reuse style feel from page-title) */
+.section-title {
+  font-size: 10px;
+  color: #5e4b43;
+  margin-bottom: 10px;
+}
+
+/* Add friend section */
+.add-friend-section {
+  margin-bottom: 20px;
+}
+
+/* Form layout */
+
+.add-friend-form {
+  display: flex;
+  gap: 8px;
+  align-items: stretch; /* forces same height */
+}
+
+.add-friend-form .input-field {
+  flex: 1;
+  height: 36px;
+  margin-bottom: 0; /* remove default spacing */
+}
+
+.submit-friend-btn {
+  width: auto;
+  height: 36px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+/* Icon alignment fix */
+.submit-friend-btn i {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
+
+/* Friends list */
+.friends-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Each friend row */
+.friend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  text-decoration: none;
+
+  background-color: #fffdfb;
+  border: 2px solid #e8d8cc;
+  padding: 8px;
+}
+
+/* Hover effect (matches your style) */
+.friend-item:hover {
+  transform: translateY(-2px);
+  transition: 0.1s;
+}
+
+/* Avatar size (reuses your existing avatar style) */
+.friend-item .avatar {
+  width: 40px;
+  height: 40px;
+}
+
+/* Name */
+.friend-name {
+  font-size: 8px;
+  color: #5e4b43;
 }
 
 /* || RESPONSIVE */
