@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, jsonify
 from app import app, db
-from app.models import Habit, HabitCompletion, UserCat, Cat
+from app.models import Habit, HabitCompletion, UserCat, Cat, Activity
 
 @app.route("/profile/")
 def profile():
@@ -87,4 +87,18 @@ def profile():
         stats=stats,
         habit_summary=habit_summary,
         cat_collection=cat_collection
+    )
+
+@app.route("/leaderboard/")
+def leaderboard():
+    activities = [
+        {"message": "User A completed Study"},
+        {"message": "User B unlocked Luna"},
+        {"message": "User C reached a 7-day streak"},
+        {"message": "User D completed Exercise"}
+    ]
+
+    return render_template(
+        "Leaderboard_page.html",
+        activities=activities
     )

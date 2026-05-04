@@ -43,10 +43,9 @@
             <div class="leaderboard-section">
                 <h2 class="leaderboard-title">Friends' Activity</h2>
                 <div class="activity-feed">
-                    <div class="activity-item">User A unlocked a cat</div>
-                    <div class="activity-item">User B completed a habit</div>
-                    <div class="activity-item">User C exercised for X days</div>
-                    <div class="activity-item">User D completed a task</div>
+                    {% for activity in activities %}
+                    <div class="activity-item">{{ activity.message }}</div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
