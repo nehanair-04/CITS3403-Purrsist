@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from app import app, db
-from app.models import User, Habit, HabitCompletion
+from app.models import User, Habit, HabitCompletion, Cat, UserCat
 from datetime import date
 
 @app.route("/")
@@ -71,8 +71,7 @@ def complete_habit(habit_id):
         completion = HabitCompletion(habit_id=habit_id, date_completed=today)
         db.session.add(completion)
         db.session.commit()
-    return jsonify({"success": True})
-
+    return redirect(url_for("dashboard"))
 
 @app.route("/habits")
 @login_required
@@ -82,43 +81,75 @@ def habits():
 @app.route("/shelter")
 @login_required
 def shelter():
-    return render_template("CatShelter_page.html")
+    from app.models import check_unlock_condition, get_streak
+    from datetime import date
 
-from flask_login import login_required, current_user
-from app.models import Habit, HabitCompletion
+    all_cats = Cat.query.all()
+    owned_cat_ids = {
+        uc.cat_id for uc in UserCat.query.filter_by(user_id=current_user.id).all()
+    }
+
+    # Unlock new cats
+    for cat in all_cats:
+        if cat.id not in owned_cat_ids:
+            if check_unlock_condition(current_user.id, cat):
+                new_unlock = UserCat(user_id=current_user.id, cat_id=cat.id)
+                db.session.add(new_unlock)
+                owned_cat_ids.add(cat.id)
+    db.session.commit()
+
+    # --- Calculate happiness ---
+    today = str(date.today())
+
+    completed_today = HabitCompletion.query.join(Habit).filter(
+        Habit.user_id == current_user.id,
+        HabitCompletion.date_completed == today
+    ).count()
+
+    total_habits = Habit.query.filter_by(user_id=current_user.id).count()
+    streak = get_streak(current_user.id)
+    cats_owned = len(owned_cat_ids)
+
+    # Scores
+    progress_score = int((completed_today / total_habits) * 50) if total_habits > 0 else 0
+    streak_score = min(streak * 3, 30)
+    cats_score = min(cats_owned * 5, 20)
+
+    happiness = progress_score + streak_score + cats_score
+    happiness = max(0, min(int(happiness), 100))
+
+    return render_template(
+        "CatShelter_page.html",
+        cats=all_cats,
+        owned_cat_ids=owned_cat_ids,
+        happiness=happiness
+    )
 
 @app.route("/profile")
 @login_required
 def profile():
-
-    # count total completed habits for THIS user
     habits_completed = (
         HabitCompletion.query
         .join(Habit, Habit.id == HabitCompletion.habit_id)
         .filter(Habit.user_id == current_user.id)
         .count()
     )
-
-    return render_template(
-        "Profile_page.html",
-        user=current_user,
-        habits_completed=habits_completed
-    )
-
-from app.models import User
+    return render_template("Profile_page.html", user=current_user, habits_completed=habits_completed)
 
 @app.route("/friends")
 @login_required
 def friends():
-    # placeholder
     all_users = User.query.limit(5).all()
-
-    return render_template(
-        "FriendsList_page.html",
-        friends=all_users
-    )
+    return render_template("FriendsList_page.html", friends=all_users)
 
 @app.route("/leaderboard")
 @login_required
 def leaderboard():
-    return render_template("Leaderboard_page.html")
+    users = User.query.all()
+    leaderboard_data = []
+    for u in users:
+        leaderboard_data.append({
+            "username": u.username,
+            "streak": 0
+        })
+    return render_template("Leaderboard_page.html", leaderboard=leaderboard_data)
