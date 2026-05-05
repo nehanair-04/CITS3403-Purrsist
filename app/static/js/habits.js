@@ -206,6 +206,11 @@ document.addEventListener("DOMContentLoaded", () => {
     closeAllModals();
   };
 
+  // ---------------- CANCEL EDIT ----------------
+  document.getElementById("cancel-edit").onclick = () => {
+    closeAllModals();
+  };
+
   // ---------------- DELETE ----------------
   document.getElementById("delete-habit").onclick = async () => {
     const name = normalize(editName.value);

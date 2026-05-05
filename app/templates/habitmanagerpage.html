@@ -73,12 +73,19 @@
 
         <input id="edit-name" class="input-field" />
 
-        <select id="edit-frequency" class="input-field">
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-          <option value="custom">Custom</option>
-        </select>
+        <!-- REPLACED SELECT WITH INPUT + DATALIST -->
+        <input
+          id="edit-frequency"
+          class="input-field"
+          list="tag-options"
+          placeholder="daily / weekly / monthly / custom"
+        />
+
+        <datalist id="tag-options">
+          <option value="daily"></option>
+          <option value="weekly"></option>
+          <option value="monthly"></option>
+        </datalist>
 
         <div class="modal-buttons">
           <button id="delete-habit" class="delete-btn">Delete</button>
