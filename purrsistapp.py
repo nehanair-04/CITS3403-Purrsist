@@ -1,13 +1,5 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from app import app
 
-app = Flask(__name__)
+if __name__ == '__main__':
+    app.run(debug=True)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///purrsist.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-db = SQLAlchemy(app)
-
-@app.route("/")
-def home():
-    return "Purrsist running!"
