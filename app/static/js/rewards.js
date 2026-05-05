@@ -6,10 +6,10 @@ function showRewardPopup(message) {
   popup.classList.add("active");
 
   setTimeout(() => {
-    closeRewardPopup();
+    closeRewardModal();
   }, 4000);
 }
 
-function closeRewardPopup() {
+function closeRewardPModal() {
   document.getElementById("reward-modal").classList.remove("active");
 }
