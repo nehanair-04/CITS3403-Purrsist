@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Purrsist Edit Habit Pop-up</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="add-habit-page">
+    <!-- Edit Habit Modal -->
+    <div class="modal-overlay active" id="edit-habit-modal">
+      <div class="modal">
+        <h1 class="page-title">Edit Habit</h1>
+        <input type="text" class="input-field" placeholder="Edit Habit Name" />
+        <select class="input-field">
+          <option>Daily</option>
+          <option>Weekly</option>
+          <option>Monthly</option>
+        </select>
+        <div class="modal-buttons">
+          <button
+            class="delete-btn"
+            onclick="document.getElementById('edit-habit-modal').classList.remove('active'); document.getElementById('delete-habit-modal').classList.add('active')"
+          >
+            Delete
+          </button>
+          <div class="modal-buttons-right">
+            <button class="cancel-btn">Cancel</button>
+            <button class="add-habit-btn">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Habit Confirmation Modal -->
+    <div class="modal-overlay" id="delete-habit-modal">
+      <div class="modal">
+        <h2 class="page-title">Delete Habit?</h2>
+        <p class="page-subtitle">This cannot be undone.</p>
+        <div class="modal-buttons">
+          <button
+            class="cancel-btn"
+            onclick="document.getElementById('delete-habit-modal').classList.remove('active'); document.getElementById('edit-habit-modal').classList.add('active')"
+          >
+            Cancel
+          </button>
+          <button class="delete-btn">Delete</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

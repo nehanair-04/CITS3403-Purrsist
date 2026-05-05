@@ -106,6 +106,26 @@ body {
   text-decoration: underline;
 }
 
+.logout-confirm-btn {
+  width: auto;
+  background-color: #c0392b;
+  color: white;
+  border: 2px solid #942d22;
+  padding: 8px 12px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.logout-confirm-btn:hover {
+  background-color: #e74c3c;
+  text-decoration: none;
+}
+
 /* || BUTTONS */
 
 button {
@@ -130,9 +150,11 @@ button:hover {
   border: 2px solid #e8d8cc;
   margin: 16px auto;
   padding: 24px;
-  max-width: 400px;
+  max-width: 900px;
   width: 100%;
   text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .habit-card {
@@ -162,7 +184,6 @@ button:hover {
 }
 
 /* || MODALS */
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -170,7 +191,6 @@ button:hover {
   width: 100%;
   height: 100%;
   background-color: rgba(232, 216, 204, 0.7);
-
   display: none;
   justify-content: center;
   align-items: center;
@@ -183,9 +203,11 @@ button:hover {
 .modal {
   background-color: #fff3e8;
   border: 2px solid #e8d8cc;
-  max-width: 400px;
-  width: 100%;
-  padding: 16px;
+  max-width: 500px;
+  width: 50%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal input,
@@ -198,13 +220,71 @@ button:hover {
   font-family: inherit;
 }
 
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.modal-buttons-right {
+  display: flex;
+  gap: 8px;
+}
+
+.add-habit-btn {
+  width: auto;
+  background-color: #f7b7a3;
+  color: white;
+  border: 2px solid #e8d8cc;
+  padding: 8px 12px;
+}
+
+.add-habit-btn:hover {
+  background-color: #f3a48e;
+}
+
+.cancel-btn {
+  width: auto;
+  background-color: transparent;
+  color: #5e4b43;
+  border: 2px solid #e8d8cc;
+  padding: 8px 12px;
+}
+
+.cancel-btn:hover {
+  background-color: #f0e0d6;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.delete-btn {
+  width: auto;
+  background-color: #c0392b;
+  color: white;
+  border: 2px solid #942d22;
+  font-size: 10px;
+}
+
+.delete-btn:hover {
+  background-color: #e74c3c;
+}
+
 /* || LOGIN/REGISTER */
 
 .login-page {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: auto;
+  padding: 0;
+  margin: 0;
 }
 
 .login-title {
@@ -238,6 +318,10 @@ button:hover {
   background-color: #fff8f5;
 }
 
+.cat-shelter-page .card {
+  min-height: auto;
+}
+
 /* Titles */
 
 .page-title {
@@ -247,7 +331,7 @@ button:hover {
 
 .page-subtitle {
   color: #8a746a;
-  font-size: 10px;
+  font-size: 12px;
   margin-bottom: 20px;
 }
 
@@ -262,14 +346,14 @@ button:hover {
 /* Cat slot */
 
 .cat-slot {
-  padding: 8px;
+  padding: 6px;
   border-radius: 8px;
   text-align: center;
-
   background-color: #fffdfb;
   border: 2px solid #d8b49a;
+  max-width: auto;
+  margin: 0 auto;
 }
-
 /* Modifier */
 
 .cat-slot:hover {
@@ -326,8 +410,9 @@ button:hover {
 }
 
 .cat-image-placeholder img {
-  width: 100%;
-  height: auto;
+  width: 140px;
+  height: 150px;
+  object-fit: cover;
   border-radius: 4px;
 }
 
@@ -377,19 +462,27 @@ button:hover {
   background-color: #fff9f3;
 }
 
-/* Layout */
+.leaderboard-page .card {
+  min-height: auto;
+}
 
+/* Layout */
 .leaderboard-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-top: 16px;
+  flex: 1;
 }
 
-/* Sections (NEW) */
 .leaderboard-section {
   display: flex;
   flex-direction: column;
+}
+
+.leaderboard-list,
+.activity-feed {
+  min-height: auto;
 }
 
 /* Title (NEW replacement for leaderboard-title) */
@@ -397,14 +490,6 @@ button:hover {
   font-size: 10px;
   margin-bottom: 12px;
   color: #5e4b43;
-}
-
-/* Leaderboard list */
-
-.leaderboard-list {
-  background-color: #fffdfb;
-  border: 2px solid #e8d8cc;
-  padding: 12px;
 }
 
 /* Entry */
@@ -725,6 +810,58 @@ button:hover {
 .friend-name {
   font-size: 8px;
   color: #5e4b43;
+}
+
+/* || HABIT DASHBOARD PAGE */
+
+.habit-dashboard-page .card {
+  min-height: auto;
+  text-align: left;
+  font-size: 12px;
+}
+
+.habit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.habit-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fffdf9;
+  border: 2px solid #e8d8cc;
+  padding: 12px;
+}
+
+.habit-text {
+  font-size: 12px;
+  margin: 0;
+}
+
+.complete-btn {
+  width: auto;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.progress-section {
+  margin-bottom: 16px;
+}
+
+.progress-label {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.next-reward {
+  background-color: #fff0c9;
+  border: 2px solid #e8d8cc;
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
 }
 
 /* || RESPONSIVE */
