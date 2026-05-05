@@ -35,6 +35,13 @@ class UserCat(db.Model):
     cat_id = db.Column(db.Integer, db.ForeignKey("cat.id"), nullable=False)
 
 
+class Activity(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    event_type = db.Column(db.String(50), nullable=False)
+    message = db.Column(db.String(200), nullable=False)
+    created_at = db.Column(db.String(30), nullable=False)
+
 
 # TEST DATA
 
