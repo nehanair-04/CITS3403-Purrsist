@@ -2,6 +2,10 @@ from flask import render_template, request, redirect, url_for, jsonify
 from app import app, db
 from app.models import Habit, HabitCompletion, UserCat, Cat, Activity
 
+@app.route("/", methods=["GET"])
+def index():
+    return "Purrsist running!"
+
 @app.route("/profile/")
 def profile():
     # Temporary user id before login system is connected
