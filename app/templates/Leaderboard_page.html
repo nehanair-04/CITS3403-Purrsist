@@ -8,7 +8,7 @@
       href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body class="leaderboard-page">
     <div class="card leaderboard-card">
@@ -17,26 +17,9 @@
             
             <div class="leaderboard-section">
                 <h2 class="leaderboard-title">Ranking</h2>
-                <div class="leaderboard-list">
-                    <div class="leaderboard-entry first-place">
-                        <span class="friend-name">User A</span>
-                        <span class="friend-streak">X days</span>
-                    </div>
 
-                    <div class="leaderboard-entry second-place">
-                        <span class="friend-name">User B</span>
-                        <span class="friend-streak">X days</span>
-                    </div>
-
-                    <div class="leaderboard-entry third-place">
-                        <span class="friend-name">User C</span>
-                        <span class="friend-streak">X days</span>
-                    </div>
-
-                    <div class="leaderboard-entry">
-                        <span class="friend-name">other users</span>
-                        <span class="friend-streak">X days</span>
-                    </div>
+                <div class="leaderboard-list" id="leaderboard-list">
+                    <!-- Leaderboard entries will be added by JavaScript -->
                 </div>
             </div>
             
@@ -50,5 +33,7 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ url_for('static', filename='leaderboard.js') }}"></script>
 </body>
 </html>
