@@ -11,9 +11,10 @@ migration = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = "login"
 
-from app import routes
-from app import models
-
 @login.user_loader
 def load_user(user_id):
-    return models.User.query.get(int(user_id))
+    from app.models import User
+    return User.query.get(int(user_id))
+
+from app import routes
+from app import models

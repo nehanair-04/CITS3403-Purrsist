@@ -72,3 +72,53 @@ def complete_habit(habit_id):
         db.session.add(completion)
         db.session.commit()
     return jsonify({"success": True})
+
+
+@app.route("/habits")
+@login_required
+def habits():
+    return render_template("habitmanagerpage.html")
+
+@app.route("/shelter")
+@login_required
+def shelter():
+    return render_template("CatShelter_page.html")
+
+from flask_login import login_required, current_user
+from app.models import Habit, HabitCompletion
+
+@app.route("/profile")
+@login_required
+def profile():
+
+    # count total completed habits for THIS user
+    habits_completed = (
+        HabitCompletion.query
+        .join(Habit, Habit.id == HabitCompletion.habit_id)
+        .filter(Habit.user_id == current_user.id)
+        .count()
+    )
+
+    return render_template(
+        "Profile_page.html",
+        user=current_user,
+        habits_completed=habits_completed
+    )
+
+from app.models import User
+
+@app.route("/friends")
+@login_required
+def friends():
+    # placeholder
+    all_users = User.query.limit(5).all()
+
+    return render_template(
+        "FriendsList_page.html",
+        friends=all_users
+    )
+
+@app.route("/leaderboard")
+@login_required
+def leaderboard():
+    return render_template("Leaderboard_page.html")

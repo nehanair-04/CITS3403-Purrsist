@@ -34,7 +34,7 @@
 
           <button
             class="complete-btn"
-            onclick="completeHabit(event, {{ habit.id }})"
+            onclick="completeHabit(event, '{{ habit.id }}')"
             {%
             if
             habit.id
@@ -56,7 +56,6 @@
           <span id="progress-text">{{ progress }}</span>%
         </p>
 
-        <!-- ✅ NO JINJA IN STYLE -->
         <div class="progress-bar">
           <div
             class="progress-bar-fill"

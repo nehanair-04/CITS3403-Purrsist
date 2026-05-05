@@ -9,10 +9,14 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
   </head>
 
   <body class="cat-shelter-page">
+    {% include "navbar.html" %}
     <div class="card">
       <h1 class="page-title">Cat Shelter</h1>
       <p class="page-subtitle">Your Collection</p>
@@ -20,7 +24,9 @@
       <div class="cat-grid">
         <div class="cat-slot">
           <div class="cat-image-placeholder">
-            <img src="images/cat-example.jpg" alt="Cat placeholder" />
+            <img
+              src="{{ url_for('static', filename='images/cat-example.jpg') }}"
+            />
           </div>
           <div class="cat-name-tag">Luna</div>
           <div class="rarity-label">Common</div>
@@ -28,7 +34,9 @@
 
         <div class="cat-slot">
           <div class="cat-image-placeholder">
-            <img src="images/cat-example.jpg" alt="Cat placeholder" />
+            <img
+              src="{{ url_for('static', filename='images/cat-example.jpg') }}"
+            />
           </div>
           <div class="cat-name-tag">Mochi</div>
           <div class="rarity-label">Common</div>
@@ -36,7 +44,9 @@
 
         <div class="cat-slot rare">
           <div class="cat-image-placeholder">
-            <img src="images/cat-example.jpg" alt="Cat placeholder" />
+            <img
+              src="{{ url_for('static', filename='images/cat-example.jpg') }}"
+            />
           </div>
           <div class="cat-name-tag">Astro</div>
           <div class="rarity-label">Rare</div>
@@ -44,7 +54,9 @@
 
         <div class="cat-slot">
           <div class="cat-image-placeholder">
-            <img src="images/cat-example.jpg" alt="Cat placeholder" />
+            <img
+              src="{{ url_for('static', filename='images/cat-example.jpg') }}"
+            />
           </div>
           <div class="cat-name-tag">Coco</div>
           <div class="rarity-label">Common</div>
@@ -52,7 +64,9 @@
 
         <div class="cat-slot">
           <div class="cat-image-placeholder">
-            <img src="images/cat-example.jpg" alt="Cat placeholder" />
+            <img
+              src="{{ url_for('static', filename='images/cat-example.jpg') }}"
+            />
           </div>
           <div class="cat-name-tag">Milo</div>
           <div class="rarity-label">Common</div>
@@ -60,7 +74,9 @@
 
         <div class="cat-slot rare">
           <div class="cat-image-placeholder">
-            <img src="images/cat-example.jpg" alt="Cat placeholder" />
+            <img
+              src="{{ url_for('static', filename='images/cat-example.jpg') }}"
+            />
           </div>
           <div class="cat-name-tag">Nova</div>
           <div class="rarity-label">Rare</div>
@@ -68,7 +84,9 @@
 
         <div class="cat-slot empty">
           <div class="cat-image-placeholder">
-            <img src="images/cat-example.jpg" alt="Cat placeholder" />
+            <img
+              src="{{ url_for('static', filename='images/cat-example.jpg') }}"
+            />
           </div>
           <div class="cat-name-tag">Peach</div>
           <div class="rarity-label">Common</div>
@@ -76,7 +94,9 @@
 
         <div class="cat-slot empty">
           <div class="cat-image-placeholder">
-            <img src="images/cat-example.jpg" alt="Cat placeholder" />
+            <img
+              src="{{ url_for('static', filename='images/cat-example.jpg') }}"
+            />
           </div>
           <div class="cat-name-tag">Bean</div>
           <div class="rarity-label">Common</div>
