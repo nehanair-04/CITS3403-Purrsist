@@ -3,6 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from app import app, db
 from app.models import User, Habit, HabitCompletion, Cat, UserCat, Activity
 from datetime import date
+from sqlalchemy import func
 
 @app.route("/")
 def index():
@@ -73,10 +74,95 @@ def complete_habit(habit_id):
         db.session.commit()
     return redirect(url_for("dashboard"))
 
+from flask import render_template, request
+from flask_login import login_required, current_user
+from app import app, db
+from app.models import Habit
+
 @app.route("/habits")
 @login_required
 def habits():
-    return render_template("habitmanagerpage.html")
+    habits = Habit.query.filter_by(user_id=current_user.id).all()
+    return render_template("habitmanagerpage.html", habits=habits)
+
+
+@app.route("/habits/create", methods=["POST"])
+@login_required
+def create_habit():
+    name = " ".join(request.form.get("name", "").strip().lower().split())
+    frequency = request.form.get("frequency", "").strip()
+
+    if not name or not frequency:
+        return {"success": False}, 400
+
+    existing = Habit.query.filter(
+        Habit.user_id == current_user.id,
+        func.lower(Habit.name) == name
+    ).first()
+
+    if existing:
+        return {
+            "success": False,
+            "duplicate": True,
+            "name": existing.name,
+            "frequency": existing.frequency
+        }, 409
+
+    habit = Habit(
+        user_id=current_user.id,
+        name=name,
+        frequency=frequency
+    )
+
+    db.session.add(habit)
+    db.session.commit()
+
+    return {
+        "success": True,
+        "name": habit.name,
+        "frequency": habit.frequency
+    }, 200
+
+@app.route("/habits/update", methods=["POST"])
+@login_required
+def update_habit():
+    name = " ".join(request.form.get("name", "").strip().lower().split())
+    frequency = request.form.get("frequency", "").strip()
+
+    habit = Habit.query.filter(
+        Habit.user_id == current_user.id,
+        func.lower(Habit.name) == name
+    ).first()
+
+    if not habit:
+        return {"success": False}, 404
+
+    habit.frequency = frequency
+    db.session.commit()
+
+    return {
+        "success": True,
+        "updated": True,
+        "name": habit.name,
+        "frequency": habit.frequency
+    }, 200
+
+@app.route("/habits/delete", methods=["POST"])
+@login_required
+def delete_habit():
+    name = request.form.get("name", "").strip().lower()
+
+    habit = Habit.query.filter_by(
+        user_id=current_user.id,
+        name=name
+    ).first()
+
+    if habit:
+        db.session.delete(habit)
+        db.session.commit()
+
+    return {"success": True}, 200
+
 
 @app.route("/shelter")
 @login_required

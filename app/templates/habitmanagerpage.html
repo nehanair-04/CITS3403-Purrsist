@@ -2,12 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Purrsist! - Habit Manager</title>
+    <title>Habit Manager</title>
 
     <link
       href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
       rel="stylesheet"
-      <link
+    />
+
+    <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
@@ -15,36 +17,96 @@
 
   <body>
     {% include "navbar.html" %}
+
     <div class="card">
       <h2 class="page-title">Habit Manager</h2>
       <p class="page-subtitle">Edit your habits or add new ones</p>
 
       <div id="habit-list">
+        {% for habit in habits %}
         <div class="habit-card">
           <div class="habit-row">
-            <span class="pixel-small">Study 2 hours</span>
-            <button class="pixel-small edit-btn">EDIT</button>
+            <span class="habit-name">{{ habit.name }}</span>
+            <span class="habit-tag">{{ habit.frequency }}</span>
+            <button class="edit-btn">EDIT</button>
           </div>
         </div>
-
-        <div class="habit-card">
-          <div class="habit-row">
-            <span class="pixel-small">Exercise</span>
-            <button class="pixel-small edit-btn">EDIT</button>
-          </div>
-        </div>
-
-        <div class="habit-card">
-          <div class="habit-row">
-            <span class="pixel-small">Drink water</span>
-            <button class="pixel-small edit-btn">EDIT</button>
-          </div>
-        </div>
+        {% endfor %}
       </div>
 
-      <div style="margin-top: 16px">
-        <button id="add-habit-btn">+ ADD HABIT</button>
+      <button id="add-habit-btn">+ ADD HABIT</button>
+    </div>
+
+    <!-- ADD MODAL -->
+    <div id="add-habit-modal" class="modal-overlay">
+      <div class="modal">
+        <form id="add-habit-form">
+          <input name="name" placeholder="Habit name" required />
+
+          <input
+            name="frequency"
+            list="tag-options"
+            placeholder="daily / weekly / monthly / custom"
+            required
+          />
+
+          <datalist id="tag-options">
+            <option value="daily"></option>
+            <option value="weekly"></option>
+            <option value="monthly"></option>
+          </datalist>
+
+          <div class="modal-buttons">
+            <button type="button" id="close-add-modal" class="cancel-btn">
+              Cancel
+            </button>
+            <button type="submit" class="add-habit-btn">Save</button>
+          </div>
+        </form>
       </div>
     </div>
+
+    <!-- EDIT MODAL -->
+    <div class="modal-overlay" id="edit-habit-modal">
+      <div class="modal">
+        <h2 class="page-title">Edit Habit</h2>
+
+        <input id="edit-name" class="input-field" />
+
+        <select id="edit-frequency" class="input-field">
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+          <option value="custom">Custom</option>
+        </select>
+
+        <div class="modal-buttons">
+          <button id="delete-habit" class="delete-btn">Delete</button>
+
+          <div class="modal-buttons-right">
+            <button type="button" id="cancel-edit" class="cancel-btn">
+              Cancel
+            </button>
+            <button type="button" id="save-edit" class="add-habit-btn">
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DUPLICATE MODAL -->
+    <div class="modal-overlay" id="duplicate-modal">
+      <div class="modal">
+        <p id="dup-message">Habit already exists.</p>
+
+        <div class="modal-buttons">
+          <button id="cancel-dup" class="cancel-btn">No</button>
+          <button id="go-edit" class="add-habit-btn">Yes, edit it</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/habits.js') }}"></script>
   </body>
 </html>
