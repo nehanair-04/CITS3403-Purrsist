@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from app import app, db
-from app.models import User, Habit, HabitCompletion, Cat, UserCat
+from app.models import User, Habit, HabitCompletion, Cat, UserCat, Activity
 from datetime import date
 
 @app.route("/")
@@ -128,14 +128,49 @@ def shelter():
 @app.route("/profile")
 @login_required
 def profile():
-    habits_completed = (
-        HabitCompletion.query
-        .join(Habit, Habit.id == HabitCompletion.habit_id)
-        .filter(Habit.user_id == current_user.id)
-        .count()
-    )
-    return render_template("Profile_page.html", user=current_user, habits_completed=habits_completed)
+    from app.models import get_streak
 
+    habits = Habit.query.filter_by(user_id=current_user.id).all()
+    habits_completed = 0
+    habit_summary = []
+
+    for habit in habits:
+        completed_times = HabitCompletion.query.filter_by(habit_id=habit.id).count()
+        habits_completed += completed_times
+        habit_summary.append({
+            "name": habit.name,
+            "completed_times": completed_times
+        })
+
+    user_cats = UserCat.query.filter_by(user_id=current_user.id).all()
+    cats_collected = len(user_cats)
+    cat_collection = []
+    for user_cat in user_cats[:3]:
+        cat = db.session.get(Cat, user_cat.cat_id)
+        if cat:
+            cat_collection.append({
+                "name": cat.name,
+                "rarity": cat.rarity
+            })
+
+    streak = get_streak(current_user.id)
+
+    stats = {
+        "habits_completed": habits_completed,
+        "longest_streak": streak,
+        "current_streak": streak,
+        "cats_collected": cats_collected
+    }
+
+    return render_template(
+        "Profile_page.html",
+        user=current_user,
+        habits_completed=habits_completed,
+        habit_summary=habit_summary,
+        cat_collection=cat_collection,
+        stats=stats
+    )
+  
 @app.route("/friends")
 @login_required
 def friends():

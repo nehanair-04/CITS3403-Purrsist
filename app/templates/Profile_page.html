@@ -40,14 +40,55 @@
           <p class="stat-value">{{ habits_completed }}</p>
         </div>
 
-        <div class="stat-item">
-          <p class="stat-label">Longest Streak</p>
-          <p class="stat-value">0 days</p>
+        <div class="profile-stats">
+            <div class="stat-item">
+                <p class="stat-label">Habits Completed</p>
+                <p class="stat-value">{{ stats.habits_completed }}</p>
+            </div>
+            <div class="stat-item">
+                <p class="stat-label">Longest Streak</p>
+                <p class="stat-value">{{ stats.longest_streak }}</p>
+            </div>
+            <div class="stat-item">
+                <p class="stat-label">Cats Collected</p>
+                <p class="stat-value">{{ stats.cats_collected }}</p>
+            </div>
         </div>
 
-        <div class="stat-item">
-          <p class="stat-label">Cats Collected</p>
-          <p class="stat-value">0</p>
+        <div class="streak-display">
+            <p class="stat-label">Current Streak</p>
+            <span class="streak-days">{{ stats.current_streak }} days</span>
+        </div>
+
+        <div class="habit-summary-section">
+            <h2 class="history-title">Habit Summary</h2>
+
+            <div class="summary-list">
+                {% for habit in habit_summary %}
+                <div class="summary-item">
+                    <span class="habit-name">{{ habit.name }}</span>
+                    <span class="habit-progress">Completed {{ habit.completed_times }} times</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Other users can see the cat collection summary -->
+        <div class="cat-summary-section">
+            <h2 class="history-title">Cat Collection Summary</h2>
+
+            <p class="profile-note">
+                Other users can see the number of cats collected and a preview of the user's cat collection.
+            </p>
+
+            <div class="summary-list">
+                {% for cat in cat_collection %}
+                <div class="summary-item">
+                    <span class="habit-name">{{ cat.name }}</span>
+                    <span class="habit-progress">{{ cat.rarity }}</span>
+                </div>
+                {% endfor %}
+            </div>
         </div>
       </div>
 

@@ -9,34 +9,28 @@
       href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
       rel="stylesheet"
     />
-
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-  </head>
-
-  <body class="leaderboard-page">
-    {% include "navbar.html" %}
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body class="leaderboard-page">
     <div class="card leaderboard-card">
-      <h1 class="page-title">Leaderboard</h1>
+        <h1 class="page-title">Leaderboard</h1>
+        <div class="leaderboard-layout">
+            
+            <div class="leaderboard-section">
+                <h2 class="leaderboard-title">Ranking</h2>
 
-      <div class="leaderboard-layout">
-        <div class="leaderboard-section">
-          <h2 class="leaderboard-title">Ranking</h2>
-
-          <div class="leaderboard-list">
-            {% for user in leaderboard %}
-
-            <div
-              class="leaderboard-entry {% if loop.index == 1 %}first-place{% endif %} {% if loop.index == 2 %}second-place{% endif %} {% if loop.index == 3 %}third-place{% endif %}"
-            >
-              <span class="friend-name">
-                #{{ loop.index }} {{ user.username }}
-              </span>
-
-              <span class="friend-streak"> {{ user.streak }} days </span>
+                <div class="leaderboard-list" id="leaderboard-list">
+                    <!-- Leaderboard entries will be added by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="leaderboard-section">
+                <h2 class="leaderboard-title">Friends' Activity</h2>
+                <div class="activity-feed">
+                    {% for activity in activities %}
+                    <div class="activity-item">{{ activity.message }}</div>
+                    {% endfor %}
+                </div>
             </div>
 
             {% endfor %}
@@ -55,5 +49,7 @@
         </div>
       </div>
     </div>
-  </body>
+
+    <script src="{{ url_for('static', filename='leaderboard.js') }}"></script>
+</body>
 </html>
