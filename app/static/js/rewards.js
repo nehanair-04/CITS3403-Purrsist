@@ -10,6 +10,6 @@ function showRewardPopup(message) {
   }, 4000);
 }
 
-function closeRewardPModal() {
+function closeRewardModal() {
   document.getElementById("reward-modal").classList.remove("active");
 }
