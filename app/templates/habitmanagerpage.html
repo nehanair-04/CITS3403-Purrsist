@@ -7,11 +7,14 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
       rel="stylesheet"
+      <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
     />
-    <link rel="stylesheet" href="style.css" />
   </head>
 
   <body>
+    {% include "navbar.html" %}
     <div class="card">
       <h2 class="page-title">Habit Manager</h2>
       <p class="page-subtitle">Edit your habits or add new ones</p>
