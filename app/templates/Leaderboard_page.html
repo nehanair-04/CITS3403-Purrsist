@@ -4,52 +4,45 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Purrsist Leaderboard</title>
-
     <link
       href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-</head>
-<body class="leaderboard-page">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="leaderboard-page">
+    {% include "navbar.html" %}
     <div class="card leaderboard-card">
-        <h1 class="page-title">Leaderboard</h1>
-        <div class="leaderboard-layout">
-            
-            <div class="leaderboard-section">
-                <h2 class="leaderboard-title">Ranking</h2>
-
-                <div class="leaderboard-list" id="leaderboard-list">
-                    <!-- Leaderboard entries will be added by JavaScript -->
-                </div>
+      <h1 class="page-title">Leaderboard</h1>
+      <div class="leaderboard-layout">
+        <div class="leaderboard-section">
+          <h2 class="leaderboard-title">Ranking</h2>
+          <div class="leaderboard-list">
+            {% for user in leaderboard %}
+            <div
+              class="leaderboard-entry {% if loop.index == 1 %}first-place{% endif %} {% if loop.index == 2 %}second-place{% endif %} {% if loop.index == 3 %}third-place{% endif %}"
+            >
+              <span class="friend-name"
+                >#{{ loop.index }} {{ user.username }}</span
+              >
+              <span class="friend-streak">{{ user.streak }} days</span>
             </div>
-            
-            <div class="leaderboard-section">
-                <h2 class="leaderboard-title">Friends' Activity</h2>
-                <div class="activity-feed">
-                    {% for activity in activities %}
-                    <div class="activity-item">{{ activity.message }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-
             {% endfor %}
           </div>
         </div>
-
         <div class="leaderboard-section">
           <h2 class="leaderboard-title">Friends' Activity</h2>
-
           <div class="activity-feed">
-            <div class="activity-item">User A unlocked a cat</div>
-            <div class="activity-item">User B completed a habit</div>
-            <div class="activity-item">User C exercised for X days</div>
-            <div class="activity-item">User D completed a task</div>
+            {% for activity in activities %}
+            <div class="activity-item">{{ activity.message }}</div>
+            {% endfor %}
           </div>
         </div>
       </div>
     </div>
-
     <script src="{{ url_for('static', filename='leaderboard.js') }}"></script>
-</body>
+  </body>
 </html>
