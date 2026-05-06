@@ -68,17 +68,22 @@
         <p id="reward-counter">{{ completed }}/{{ total }} habits done today</p>
       </div>
     </div>
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
     <!-- CAT UNLOCK MODAL -->
-    <div id="cat-unlock-modal" class="modal-overlay">
+
+    <div id="reward-modal" class="modal-overlay">
       <div class="modal">
         <h2 class="page-title">New Cat!</h2>
-        <p class="page-subtitle" id="cat-unlock-message"></p>
+        <p class="page-subtitle" id="reward-text"></p>
         <div class="modal-buttons">
-          <button id="close-cat-modal" class="add-habit-btn">Yay! 🐱</button>
+          <button onclick="closeRewardModal()" class="add-habit-btn">
+            Yay! 🐱
+          </button>
         </div>
       </div>
     </div>
+
+    <script src="{{ url_for('static', filename='js/rewards.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
   </body>
 </html>

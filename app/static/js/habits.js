@@ -130,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     closeAllModals();
     editName.value = pendingHabit.name;
     editFreq.value = pendingHabit.frequency;
+    editFreq.dispatchEvent(new Event("change"));
     editModal.classList.add("active");
   };
 
