@@ -21,6 +21,7 @@ class Habit(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     frequency = db.Column(db.String(20), nullable=False)
+    frequency_days = db.Column(db.Integer, nullable=False, default=1)
 
 class HabitCompletion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
