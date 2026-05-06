@@ -45,7 +45,6 @@ def logout():
 # frequency helper
 FREQUENCY_DAYS = {
     "daily": 1,
-    "every 2 days": 2,
     "weekly": 7,
     "biweekly": 14,
     "monthly": 30,
@@ -132,6 +131,7 @@ def create_habit():
 def update_habit():
     name = " ".join(request.form.get("name", "").strip().lower().split())
     frequency = request.form.get("frequency", "").strip()
+    custom_days = request.form.get("custom_days", "").strip()
     habit = Habit.query.filter(
         Habit.user_id == current_user.id,
         func.lower(Habit.name) == name
@@ -139,6 +139,7 @@ def update_habit():
     if not habit:
         return {"success": False}, 404
     habit.frequency = frequency
+    habit.frequency_days = FREQUENCY_DAYS.get(frequency, int(custom_days) if custom_days else 1)
     db.session.commit()
     return {"success": True, "updated": True, "name": habit.name, "frequency": habit.frequency}, 200
 

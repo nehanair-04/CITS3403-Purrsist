@@ -1,64 +1,9 @@
-function completeHabit(event, habitId) {
-  const url = COMPLETE_HABIT_URL.replace("0", habitId);
-
-  fetch(url, { method: "POST" })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) {
-        const btn = event.target;
-        btn.textContent = "Completed";
-        btn.disabled = true;
-        btn.classList.add("completed");
-        updateProgress();
-        if (
-          getRemainingHabits() === 0 &&
-          typeof showRewardPopup === "function"
-        ) {
-          showRewardPopup("All habits complete! 🐱");
-        }
-      }
-    })
-    .catch((err) => console.error(err));
-}
-
-function updateProgress() {
-  const total = document.querySelectorAll(".complete-btn").length;
-  const done = document.querySelectorAll(".complete-btn:disabled").length;
-  const percent = total === 0 ? 0 : Math.floor((done / total) * 100);
-
-  document.getElementById("progress-text").textContent = percent;
-  document.getElementById("progress-bar").style.width = `${percent}%`;
-
-  const remaining = 3 - done;
-  const rewardText = document.getElementById("reward-counter");
-
-  if (remaining > 0) {
-    rewardText.textContent = `${remaining} to next reward`;
-  } else {
-    rewardText.textContent = "Reward unlocked!";
-  }
-}
-
-function getRemainingHabits() {
-  const total = document.querySelectorAll(".complete-btn").length;
-  const done = document.querySelectorAll(".complete-btn:disabled").length;
-  return total - done;
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  const bar = document.getElementById("progress-bar");
-  if (bar) {
-    bar.style.width = `${bar.dataset.progress}%`;
-  }
-});
-
 document.addEventListener("DOMContentLoaded", () => {
   const addModal = document.getElementById("add-habit-modal");
   const dupModal = document.getElementById("duplicate-modal");
   const editModal = document.getElementById("edit-habit-modal");
   const deleteModal = document.getElementById("delete-habit-modal");
 
-  // these elements only exist on habit manager page
   const form = document.getElementById("add-habit-form");
   const habitList = document.getElementById("habit-list");
   const editName = document.getElementById("edit-name");
@@ -67,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const addFreq = document.getElementById("add-frequency");
   const addCustomDays = document.getElementById("add-custom-days");
 
-  // if we're not on the habit manager page, stop here
   if (!form) return;
 
   let pendingHabit = null;
@@ -164,7 +108,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = await res.json();
 
     if (data.success) {
-      addHabit(data.name, data.frequency);
+      const customDays = fd.get("custom_days");
+      const displayFrequency =
+        data.frequency === "custom" && customDays
+          ? `${customDays} day${customDays === "1" ? "" : "s"}`
+          : data.frequency;
+
+      addHabit(data.name, displayFrequency);
       closeAllModals();
       form.reset();
       addCustomDays.style.display = "none";
@@ -205,7 +155,12 @@ document.addEventListener("DOMContentLoaded", () => {
       body: new URLSearchParams({ name, frequency, custom_days: customDays }),
     });
 
-    updateHabit(name, frequency);
+    const displayFrequency =
+      frequency === "custom" && customDays
+        ? `${customDays} day${customDays === "1" ? "" : "s"}`
+        : frequency;
+
+    updateHabit(name, displayFrequency);
     closeAllModals();
   };
 
