@@ -11,6 +11,7 @@ function completeHabit(event, habitId) {
         btn.disabled = true;
         btn.classList.add("completed");
         updateProgress();
+        moveHabitToBottom(btn);
         if (data.new_cats && data.new_cats.length > 0) {
           data.new_cats.forEach((name) => {
             showRewardPopup(`You unlocked ${name}! 🐱`);
@@ -45,3 +46,12 @@ setInterval(() => {
     location.reload();
   }
 }, 60000);
+
+function moveHabitToBottom(button) {
+  const card = button.closest(".habit-card");
+  const list = document.getElementById("habit-list");
+
+  if (card && list) {
+    list.appendChild(card);
+  }
+}

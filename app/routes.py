@@ -157,7 +157,7 @@ def update_habit():
     habit.frequency = frequency
     habit.frequency_days = FREQUENCY_DAYS.get(frequency, int(custom_days) if custom_days else 1)
     db.session.commit()
-    return {"success": True, "updated": True, "name": habit.name, "frequency": habit.frequency}, 200
+    return {"success": True, "updated": True, "name": habit.name, "frequency": habit.frequency, "frequency_days": habit.frequency_days}, 200
 
 @app.route("/habits/delete", methods=["POST"])
 @login_required

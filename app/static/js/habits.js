@@ -6,9 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.getElementById("add-habit-form");
   const habitList = document.getElementById("habit-list");
+
   const editName = document.getElementById("edit-name");
   const editFreq = document.getElementById("edit-frequency");
   const editCustomDays = document.getElementById("edit-custom-days");
+
   const addFreq = document.getElementById("add-frequency");
   const addCustomDays = document.getElementById("add-custom-days");
 
@@ -16,22 +18,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let pendingHabit = null;
 
-  // ---------------- SHOW/HIDE CUSTOM DAYS ----------------
-  addFreq.addEventListener("change", () => {
-    addCustomDays.style.display = addFreq.value === "custom" ? "block" : "none";
-    addCustomDays.required = addFreq.value === "custom";
-  });
-
-  editFreq.addEventListener("change", () => {
-    editCustomDays.style.display =
-      editFreq.value === "custom" ? "block" : "none";
-  });
-
   // ---------------- UTIL ----------------
   function closeAllModals() {
     document
       .querySelectorAll(".modal-overlay")
       .forEach((m) => m.classList.remove("active"));
+  }
+
+  function resetAddHabitForm() {
+    const form = document.getElementById("add-habit-form");
+    if (form) form.reset();
+
+    addCustomDays.style.display = "none";
+    pendingHabit = null;
   }
 
   function normalize(str) {
@@ -55,40 +54,32 @@ document.addEventListener("DOMContentLoaded", () => {
     tagEl.style.backgroundColor = stringToColor(frequency);
   }
 
+  // ---------------- CUSTOM DAYS ----------------
+  addFreq.addEventListener("change", () => {
+    addCustomDays.style.display = addFreq.value === "custom" ? "block" : "none";
+    addCustomDays.required = addFreq.value === "custom";
+  });
+
+  editFreq.addEventListener("change", () => {
+    editCustomDays.style.display =
+      editFreq.value === "custom" ? "block" : "none";
+  });
+
   // ---------------- INIT TAGS ----------------
   document.querySelectorAll(".habit-tag").forEach((tag) => {
     applyTag(tag, tag.textContent.trim().toLowerCase());
   });
 
-  // ---------------- EDIT BUTTON DELEGATION ----------------
-  document.addEventListener("click", (e) => {
-    if (e.target.classList.contains("edit-btn")) {
-      const card = e.target.closest(".habit-card");
-      const name = card.querySelector(".habit-name").textContent.trim();
-      const freq = card
-        .querySelector(".habit-tag")
-        .textContent.trim()
-        .toLowerCase();
-
-      editName.value = name.toLowerCase();
-      editFreq.value = freq;
-      editCustomDays.style.display = freq === "custom" ? "block" : "none";
-
-      pendingHabit = { name, frequency: freq, card };
-
-      closeAllModals();
-      editModal.classList.add("active");
-    }
-  });
-
   // ---------------- OPEN ADD MODAL ----------------
   document.getElementById("add-habit-btn").onclick = () => {
     closeAllModals();
+    resetAddHabitForm();
     addModal.classList.add("active");
   };
 
   document.getElementById("close-add-modal").onclick = () => {
     addModal.classList.remove("active");
+    resetAddHabitForm();
   };
 
   // ---------------- CREATE HABIT ----------------
@@ -110,8 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (data.success) {
       addHabit(data.name, data.frequency);
       closeAllModals();
-      form.reset();
-      addCustomDays.style.display = "none";
+      resetAddHabitForm();
       return;
     }
 
@@ -119,6 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById(
         "dup-message"
       ).textContent = `"${name}" already exists. Edit it instead?`;
+
       closeAllModals();
       dupModal.classList.add("active");
     }
@@ -127,19 +118,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------- DUPLICATE MODAL ----------------
   document.getElementById("go-edit").onclick = () => {
     if (!pendingHabit) return;
+
     closeAllModals();
+
     editName.value = pendingHabit.name;
     editFreq.value = pendingHabit.frequency;
     editFreq.dispatchEvent(new Event("change"));
+
     editModal.classList.add("active");
   };
 
   document.getElementById("cancel-dup").onclick = () => {
     dupModal.classList.remove("active");
-    pendingHabit = null;
+    resetAddHabitForm();
+    closeAllModals();
   };
 
-  // ---------------- SAVE EDIT ----------------
+  // ---------------- EDIT SAVE ----------------
   document.getElementById("save-edit").onclick = async () => {
     const name = normalize(editName.value);
     const frequency = normalize(editFreq.value);
@@ -147,15 +142,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const res = await fetch("/habits/update", {
       method: "POST",
-      body: new URLSearchParams({ name, frequency, custom_days: customDays }),
+      body: new URLSearchParams({
+        name,
+        frequency,
+        custom_days: customDays,
+      }),
     });
+
     const data = await res.json();
 
-    updateHabit(name, data.frequency);
+    const displayFreq =
+      data.frequency === "custom"
+        ? `${data.frequency_days} day${data.frequency_days > 1 ? "s" : ""}`
+        : data.frequency;
+
+    updateHabit(name, displayFreq);
     closeAllModals();
   };
 
-  // ---------------- CANCEL EDIT ----------------
   document.getElementById("cancel-edit").onclick = () => closeAllModals();
 
   // ---------------- DELETE ----------------
@@ -185,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
     closeAllModals();
   };
 
-  // ---------------- ADD HABIT TO UI ----------------
+  // ---------------- ADD HABIT UI ----------------
   function addHabit(name, frequency) {
     const card = document.createElement("div");
     card.className = "habit-card";
@@ -202,7 +206,6 @@ document.addEventListener("DOMContentLoaded", () => {
     habitList.appendChild(card);
   }
 
-  // ---------------- UPDATE HABIT IN UI ----------------
   function updateHabit(name, frequency) {
     document.querySelectorAll(".habit-card").forEach((card) => {
       const n = card.querySelector(".habit-name").textContent.toLowerCase();

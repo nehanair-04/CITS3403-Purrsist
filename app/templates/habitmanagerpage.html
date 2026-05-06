@@ -27,11 +27,8 @@
         <div class="habit-card">
           <div class="habit-row">
             <span class="habit-name">{{ habit.name | capitalize }}</span>
+            <!-- prettier-ignore -->
             <span class="habit-tag">{% if habit.frequency == "custom" %}{{ habit.frequency_days }} day{{ "s" if habit.frequency_days > 1 else "" }}{% else %}{{ habit.frequency }}{% endif %}</span>
-              {% if habit.frequency == "custom" %} {{ habit.frequency_days }}
-              day{{ "s" if habit.frequency_days > 1 else "" }} {% else %} {{
-              habit.frequency }} {% endif %}
-            </span>
             <button class="edit-btn">EDIT</button>
           </div>
         </div>
