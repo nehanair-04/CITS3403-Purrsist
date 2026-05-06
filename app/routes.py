@@ -50,28 +50,23 @@ FREQUENCY_DAYS = {
     "monthly": 30,
     "bimonthly": 60,
 }
+DAYS_TO_FREQUENCY = {
+    1: "daily",
+    7: "weekly",
+    14: "biweekly",
+    30: "monthly",
+    60: "bimonthly",
+}
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
     from datetime import date, timedelta
-    all_habits = Habit.query.filter_by(user_id=current_user.id).all()
-    today = date.today()
-    today_str = str(today)
-
-    habits = []
-    for habit in all_habits:
-        days = habit.frequency_days or 1
-        cutoff = str(today - timedelta(days=days - 1))
-        done = HabitCompletion.query.filter(
-            HabitCompletion.habit_id == habit.id,
-            HabitCompletion.date_completed >= cutoff
-        ).first()
-        if not done:
-            habits.append(habit)
+    habits = Habit.query.filter_by(user_id=current_user.id).all()
+    today = str(date.today())
 
     completed_ids = {
-        hc.habit_id for hc in HabitCompletion.query.filter_by(date_completed=today_str).all()
+        hc.habit_id for hc in HabitCompletion.query.filter_by(date_completed=today).all()
     }
     total = len(habits)
     completed = len([h for h in habits if h.id in completed_ids])
@@ -88,6 +83,7 @@ def dashboard():
 @app.route("/habits/<int:habit_id>/complete", methods=["POST"])
 @login_required
 def complete_habit(habit_id):
+    from app.models import check_unlock_condition, get_streak
     today = str(date.today())
     habit = Habit.query.filter_by(id=habit_id, user_id=current_user.id).first()
     if not habit:
@@ -100,7 +96,17 @@ def complete_habit(habit_id):
     completion = HabitCompletion(habit_id=habit_id, date_completed=today)
     db.session.add(completion)
     db.session.commit()
-    return {"success": True}, 200
+
+    # check for new cat unlocks
+    owned_cat_ids = {uc.cat_id for uc in UserCat.query.filter_by(user_id=current_user.id).all()}
+    new_cats = []
+    for cat in Cat.query.all():
+        if cat.id not in owned_cat_ids and check_unlock_condition(current_user.id, cat):
+            db.session.add(UserCat(user_id=current_user.id, cat_id=cat.id))
+            new_cats.append(cat.name)
+    db.session.commit()
+
+    return {"success": True, "new_cats": new_cats}, 200
 
 @app.route("/habits")
 @login_required
@@ -113,8 +119,13 @@ def habits():
 def create_habit():
     name = " ".join(request.form.get("name", "").strip().lower().split())
     frequency = request.form.get("frequency", "").strip()
+    custom_days = request.form.get("custom_days", "").strip()
     if not name or not frequency:
         return {"success": False}, 400
+    if frequency == "custom" and custom_days:
+        days = int(custom_days)
+        frequency = DAYS_TO_FREQUENCY.get(days, "custom")
+        custom_days = str(days)
     existing = Habit.query.filter(
         Habit.user_id == current_user.id,
         func.lower(Habit.name) == name
@@ -122,6 +133,7 @@ def create_habit():
     if existing:
         return {"success": False, "duplicate": True, "name": existing.name, "frequency": existing.frequency}, 409
     habit = Habit(user_id=current_user.id, name=name, frequency=frequency)
+    habit.frequency_days = FREQUENCY_DAYS.get(frequency, int(custom_days) if custom_days else 1)
     db.session.add(habit)
     db.session.commit()
     return {"success": True, "name": habit.name, "frequency": habit.frequency}, 200
@@ -132,6 +144,10 @@ def update_habit():
     name = " ".join(request.form.get("name", "").strip().lower().split())
     frequency = request.form.get("frequency", "").strip()
     custom_days = request.form.get("custom_days", "").strip()
+    if frequency == "custom" and custom_days:
+        days = int(custom_days)
+        frequency = DAYS_TO_FREQUENCY.get(days, "custom")
+        custom_days = str(days)
     habit = Habit.query.filter(
         Habit.user_id == current_user.id,
         func.lower(Habit.name) == name
@@ -142,7 +158,6 @@ def update_habit():
     habit.frequency_days = FREQUENCY_DAYS.get(frequency, int(custom_days) if custom_days else 1)
     db.session.commit()
     return {"success": True, "updated": True, "name": habit.name, "frequency": habit.frequency}, 200
-
 @app.route("/habits/delete", methods=["POST"])
 @login_required
 def delete_habit():

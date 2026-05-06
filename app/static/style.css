@@ -921,6 +921,38 @@ button:hover {
   font-size: 12px;
 }
 
+/* || CAT UNLOCK MODAL */
+
+#cat-unlock-modal .modal {
+  text-align: center;
+}
+
+#cat-unlock-modal .page-title {
+  color: #f7b7a3;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+#cat-unlock-modal .page-subtitle {
+  font-size: 10px;
+  margin-bottom: 20px;
+}
+
+#cat-unlock-modal .modal-buttons {
+  justify-content: center;
+}
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 /* || RESPONSIVE */
 
 @media (max-width: 600px) {

@@ -9,7 +9,10 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
   </head>
   <body class="cat-shelter-page">
     {% include "navbar.html" %}
@@ -41,8 +44,9 @@
           ></div>
         </div>
         <p class="page-subtitle">{{ happiness }}%</p>
-        <p class="happiness-note">
-          Happiness is based on the user's streak, cat collection and daily activity.
+        <p class="page-subtitle">
+          Happiness is based on the user's streak, cat collection and daily
+          activity.
         </p>
       </div>
     </div>

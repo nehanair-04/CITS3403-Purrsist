@@ -108,13 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = await res.json();
 
     if (data.success) {
-      const customDays = fd.get("custom_days");
-      const displayFrequency =
-        data.frequency === "custom" && customDays
-          ? `${customDays} day${customDays === "1" ? "" : "s"}`
-          : data.frequency;
-
-      addHabit(data.name, displayFrequency);
+      addHabit(data.name, data.frequency);
       closeAllModals();
       form.reset();
       addCustomDays.style.display = "none";
@@ -150,17 +144,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const frequency = normalize(editFreq.value);
     const customDays = editCustomDays.value;
 
-    await fetch("/habits/update", {
+    const res = await fetch("/habits/update", {
       method: "POST",
       body: new URLSearchParams({ name, frequency, custom_days: customDays }),
     });
+    const data = await res.json();
 
-    const displayFrequency =
-      frequency === "custom" && customDays
-        ? `${customDays} day${customDays === "1" ? "" : "s"}`
-        : frequency;
-
-    updateHabit(name, displayFrequency);
+    updateHabit(name, data.frequency);
     closeAllModals();
   };
 

@@ -43,7 +43,7 @@
             endif
             %}
           >
-            {{ "Done" if habit.id in completed_ids else "Complete" }}
+            {{ "Completed" if habit.id in completed_ids else "Complete" }}
           </button>
         </div>
         {% endfor %}
@@ -69,6 +69,16 @@
       </div>
     </div>
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/habits.js') }}"></script>
+
+    <!-- CAT UNLOCK MODAL -->
+    <div id="cat-unlock-modal" class="modal-overlay">
+      <div class="modal">
+        <h2 class="page-title">New Cat!</h2>
+        <p class="page-subtitle" id="cat-unlock-message"></p>
+        <div class="modal-buttons">
+          <button id="close-cat-modal" class="add-habit-btn">Yay! 🐱</button>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

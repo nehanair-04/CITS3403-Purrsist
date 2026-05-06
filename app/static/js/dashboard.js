@@ -8,15 +8,33 @@ function completeHabit(event, habitId) {
     .then((data) => {
       if (data.success) {
         const btn = event.target;
-        btn.textContent = "Done";
+        btn.textContent = "Completed";
         btn.disabled = true;
         btn.classList.add("completed");
         updateProgress();
+
+        if (data.new_cats && data.new_cats.length > 0) {
+          data.new_cats.forEach((name) => {
+            showCatPopup(name);
+          });
+        }
       }
     })
     .catch((err) => console.error(err));
 }
 
+function showCatPopup(catName) {
+  const modal = document.getElementById("cat-unlock-modal");
+  const message = document.getElementById("cat-unlock-message");
+  message.textContent = `You unlocked ${catName}!`;
+  modal.classList.add("active");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("close-cat-modal").onclick = () => {
+    document.getElementById("cat-unlock-modal").classList.remove("active");
+  };
+});
 function updateProgress() {
   const total = document.querySelectorAll(".complete-btn").length;
   const done = document.querySelectorAll(".complete-btn:disabled").length;
@@ -36,3 +54,12 @@ window.addEventListener("DOMContentLoaded", () => {
     bar.style.width = `${bar.dataset.progress}%`;
   }
 });
+
+// check if day has changed and reload
+const pageLoadDate = new Date().toDateString();
+
+setInterval(() => {
+  if (new Date().toDateString() !== pageLoadDate) {
+    location.reload();
+  }
+}, 60000);

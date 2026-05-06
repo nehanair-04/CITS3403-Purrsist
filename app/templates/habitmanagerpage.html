@@ -20,6 +20,8 @@
     {% include "navbar.html" %}
     <div class="card">
       <h2 class="page-title">Habit Manager</h2>
+      <p class="page-subtitle">Edit your habits or add new ones</p>
+      <button id="add-habit-btn">+ ADD HABIT</button>
       <div id="habit-list">
         {% for habit in habits %}
         <div class="habit-card">
@@ -35,7 +37,6 @@
         </div>
         {% endfor %}
       </div>
-      <button id="add-habit-btn">+ ADD HABIT</button>
     </div>
 
     <!-- ADD HABIT MODAL -->
