@@ -158,6 +158,7 @@ def update_habit():
     habit.frequency_days = FREQUENCY_DAYS.get(frequency, int(custom_days) if custom_days else 1)
     db.session.commit()
     return {"success": True, "updated": True, "name": habit.name, "frequency": habit.frequency}, 200
+
 @app.route("/habits/delete", methods=["POST"])
 @login_required
 def delete_habit():
@@ -237,14 +238,23 @@ def friends():
 @app.route("/leaderboard")
 @login_required
 def leaderboard():
+    from app.models import get_streak
+
     users = User.query.all()
+
     leaderboard_data = []
+
     for u in users:
-        leaderboard_data.append({"username": u.username, "streak": 0})
-    activities = [
-        {"message": "User A completed Study"},
-        {"message": "User B unlocked Luna"},
-        {"message": "User C reached a 7-day streak"},
-        {"message": "User D completed Exercise"}
-    ]
-    return render_template("Leaderboard_page.html", leaderboard=leaderboard_data, activities=activities)
+        streak = get_streak(u.id)
+
+        leaderboard_data.append({
+            "username": u.username,
+            "streak": streak
+        })
+
+    leaderboard_data.sort(key=lambda x: x["streak"], reverse=True)
+
+    return render_template(
+        "Leaderboard_page.html",
+        leaderboard=leaderboard_data
+    )
