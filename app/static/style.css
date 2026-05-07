@@ -779,8 +779,36 @@ button:hover {
 .avatar img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* fills the box nicely */
+  object-fit: cover;
   display: block;
+}
+
+.profile-header {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+}
+
+.upload-btn {
+  width: auto;
+  font-size: 7px;
+  padding: 6px 10px;
+  background-color: #f7b7a3;
+  color: white;
+  border: 2px solid #e8d8cc;
+}
+
+.upload-btn:hover {
+  background-color: #f3a48e;
 }
 
 /* || FRIENDS PROFILE PAGE */

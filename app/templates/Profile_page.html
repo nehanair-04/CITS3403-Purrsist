@@ -30,33 +30,31 @@
             class="profile-avatar"
           />
         </div>
-
-        <form
-          action="{{ url_for('upload_profile_picture') }}"
-          method="POST"
-          enctype="multipart/form-data"
-          class="profile-picture-form"
-        >
-          <input
-            type="file"
-            id="profile-picture-input"
-            name="profile_picture"
-            accept="image/png, image/jpeg, image/jpg"
-            required
-            hidden
-            onchange="this.form.submit()"
-          />
-
-          <button
-            type="button"
-            class="edit-btn"
-            onclick="document.getElementById('profile-picture-input').click()"
+        <div class="profile-info">
+          <p class="profile-name">{{ user.username }}</p>
+          <form
+            action="{{ url_for('upload_profile_picture') }}"
+            method="POST"
+            enctype="multipart/form-data"
           >
-            Upload Picture
-          </button>
-        </form>
-
-        <p class="profile-name">{{ user.username }}</p>
+            <input
+              type="file"
+              id="profile-picture-input"
+              name="profile_picture"
+              accept="image/png, image/jpeg, image/jpg"
+              required
+              hidden
+              onchange="this.form.submit()"
+            />
+            <button
+              type="button"
+              class="upload-btn"
+              onclick="document.getElementById('profile-picture-input').click()"
+            >
+              Upload Picture
+            </button>
+          </form>
+        </div>
       </div>
 
       <!-- STATS -->
@@ -89,7 +87,9 @@
           {% for habit in habit_summary %}
           <div class="summary-item">
             <span class="habit-name">{{ habit.name }}</span>
-            <span class="habit-progress">Completed {{ habit.completed_times }} times</span>
+            <span class="habit-progress"
+              >Completed {{ habit.completed_times }} times</span
+            >
           </div>
           {% endfor %}
         </div>
@@ -100,7 +100,8 @@
         <h2 class="history-title">Cat Collection Summary</h2>
 
         <p class="profile-note">
-          Other users can see the number of cats collected and a preview of the user's cat collection.
+          Other users can see the number of cats collected and a preview of the
+          user's cat collection.
         </p>
 
         <div class="summary-list">
