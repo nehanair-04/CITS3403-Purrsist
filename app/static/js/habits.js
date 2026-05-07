@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function resetAddHabitForm() {
     const form = document.getElementById("add-habit-form");
     if (form) form.reset();
-
     addCustomDays.style.display = "none";
     pendingHabit = null;
   }
@@ -70,6 +69,27 @@ document.addEventListener("DOMContentLoaded", () => {
     applyTag(tag, tag.textContent.trim().toLowerCase());
   });
 
+  // ---------------- EDIT BUTTON DELEGATION ----------------
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("edit-btn")) {
+      const card = e.target.closest(".habit-card");
+      const name = card.querySelector(".habit-name").textContent.trim();
+      const freq = card
+        .querySelector(".habit-tag")
+        .textContent.trim()
+        .toLowerCase();
+
+      editName.value = name.toLowerCase();
+      editFreq.value = freq;
+      editCustomDays.style.display = freq === "custom" ? "block" : "none";
+
+      pendingHabit = { name, frequency: freq, card };
+
+      closeAllModals();
+      editModal.classList.add("active");
+    }
+  });
+
   // ---------------- OPEN ADD MODAL ----------------
   document.getElementById("add-habit-btn").onclick = () => {
     closeAllModals();
@@ -109,7 +129,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById(
         "dup-message"
       ).textContent = `"${name}" already exists. Edit it instead?`;
-
       closeAllModals();
       dupModal.classList.add("active");
     }
@@ -118,13 +137,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------- DUPLICATE MODAL ----------------
   document.getElementById("go-edit").onclick = () => {
     if (!pendingHabit) return;
-
     closeAllModals();
-
     editName.value = pendingHabit.name;
     editFreq.value = pendingHabit.frequency;
     editFreq.dispatchEvent(new Event("change"));
-
     editModal.classList.add("active");
   };
 
@@ -206,6 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
     habitList.appendChild(card);
   }
 
+  // ---------------- UPDATE HABIT UI ----------------
   function updateHabit(name, frequency) {
     document.querySelectorAll(".habit-card").forEach((card) => {
       const n = card.querySelector(".habit-name").textContent.toLowerCase();
