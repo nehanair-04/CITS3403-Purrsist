@@ -1,5 +1,7 @@
-from flask import render_template, request, redirect, url_for
+import os
+from flask import render_template, request, redirect, url_for, current_app
 from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.utils import secure_filename
 from app import app, db
 from app.models import User, Habit, HabitCompletion, Cat, UserCat
 from datetime import date
@@ -41,6 +43,42 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for("login"))
+
+# Allowed image types for profile picture upload
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
+
+def allowed_file(filename):
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
+
+
+@app.route("/profile/upload-picture", methods=["POST"])
+@login_required
+def upload_profile_picture():
+    if "profile_picture" not in request.files:
+        return redirect(url_for("profile"))
+
+    file = request.files["profile_picture"]
+
+    if file.filename == "":
+        return redirect(url_for("profile"))
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filename = f"user_{current_user.id}_{filename}"
+
+        upload_folder = current_app.config["UPLOAD_FOLDER"]
+        os.makedirs(upload_folder, exist_ok=True)
+
+        file_path = os.path.join(upload_folder, filename)
+        file.save(file_path)
+
+        current_user.profile_image = f"uploads/profile_pictures/{filename}"
+        db.session.commit()
+
+    return redirect(url_for("profile"))
 
 # frequency helper
 FREQUENCY_DAYS = {

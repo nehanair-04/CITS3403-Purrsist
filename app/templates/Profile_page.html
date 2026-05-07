@@ -25,10 +25,36 @@
       <div class="profile-header">
         <div class="avatar">
           <img
-            src="{{ url_for('static', filename='images/profile-placeholder.png') }}"
-            alt="Profile image"
+            src="{{ url_for('static', filename=user.profile_image or 'images/default-profile.jpg') }}"
+            alt="Profile picture"
+            class="profile-avatar"
           />
         </div>
+
+        <form
+          action="{{ url_for('upload_profile_picture') }}"
+          method="POST"
+          enctype="multipart/form-data"
+          class="profile-picture-form"
+        >
+          <input
+            type="file"
+            id="profile-picture-input"
+            name="profile_picture"
+            accept="image/png, image/jpeg, image/jpg"
+            required
+            hidden
+            onchange="this.form.submit()"
+          />
+
+          <button
+            type="button"
+            class="edit-btn"
+            onclick="document.getElementById('profile-picture-input').click()"
+          >
+            Upload Picture
+          </button>
+        </form>
 
         <p class="profile-name">{{ user.username }}</p>
       </div>
@@ -37,63 +63,54 @@
       <div class="profile-stats">
         <div class="stat-item">
           <p class="stat-label">Habits Completed</p>
-          <p class="stat-value">{{ habits_completed }}</p>
+          <p class="stat-value">{{ stats.habits_completed }}</p>
         </div>
 
-        <div class="profile-stats">
-            <div class="stat-item">
-                <p class="stat-label">Habits Completed</p>
-                <p class="stat-value">{{ stats.habits_completed }}</p>
-            </div>
-            <div class="stat-item">
-                <p class="stat-label">Longest Streak</p>
-                <p class="stat-value">{{ stats.longest_streak }}</p>
-            </div>
-            <div class="stat-item">
-                <p class="stat-label">Cats Collected</p>
-                <p class="stat-value">{{ stats.cats_collected }}</p>
-            </div>
+        <div class="stat-item">
+          <p class="stat-label">Longest Streak</p>
+          <p class="stat-value">{{ stats.longest_streak }} days</p>
         </div>
 
-        <div class="streak-display">
-            <p class="stat-label">Current Streak</p>
-            <span class="streak-days">{{ stats.current_streak }} days</span>
-        </div>
-
-        <div class="habit-summary-section">
-            <h2 class="history-title">Habit Summary</h2>
-
-            <div class="summary-list">
-                {% for habit in habit_summary %}
-                <div class="summary-item">
-                    <span class="habit-name">{{ habit.name }}</span>
-                    <span class="habit-progress">Completed {{ habit.completed_times }} times</span>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Other users can see the cat collection summary -->
-        <div class="cat-summary-section">
-            <h2 class="history-title">Cat Collection Summary</h2>
-
-            <p class="profile-note">
-                Other users can see the number of cats collected and a preview of the user's cat collection.
-            </p>
-
-            <div class="summary-list">
-                {% for cat in cat_collection %}
-                <div class="summary-item">
-                    <span class="habit-name">{{ cat.name }}</span>
-                    <span class="habit-progress">{{ cat.rarity }}</span>
-                </div>
-                {% endfor %}
-            </div>
+        <div class="stat-item">
+          <p class="stat-label">Cats Collected</p>
+          <p class="stat-value">{{ stats.cats_collected }}</p>
         </div>
       </div>
 
       <div class="streak-display">
-        <span class="streak-days">0 days</span>
+        <p class="stat-label">Current Streak</p>
+        <span class="streak-days">{{ stats.current_streak }} days</span>
+      </div>
+
+      <div class="habit-summary-section">
+        <h2 class="history-title">Habit Summary</h2>
+
+        <div class="summary-list">
+          {% for habit in habit_summary %}
+          <div class="summary-item">
+            <span class="habit-name">{{ habit.name }}</span>
+            <span class="habit-progress">Completed {{ habit.completed_times }} times</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Other users can see the cat collection summary -->
+      <div class="cat-summary-section">
+        <h2 class="history-title">Cat Collection Summary</h2>
+
+        <p class="profile-note">
+          Other users can see the number of cats collected and a preview of the user's cat collection.
+        </p>
+
+        <div class="summary-list">
+          {% for cat in cat_collection %}
+          <div class="summary-item">
+            <span class="habit-name">{{ cat.name }}</span>
+            <span class="habit-progress">{{ cat.rarity }}</span>
+          </div>
+          {% endfor %}
+        </div>
       </div>
 
       <div class="history-section">
