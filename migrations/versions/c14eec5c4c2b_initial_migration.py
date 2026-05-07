@@ -1,8 +1,8 @@
 """initial migration
 
-Revision ID: c9dda925dcb7
+Revision ID: c14eec5c4c2b
 Revises: 
-Create Date: 2026-05-03 14:16:15.078887
+Create Date: 2026-05-06 21:45:54.689917
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c9dda925dcb7'
+revision = 'c14eec5c4c2b'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -32,11 +32,21 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('username')
     )
+    op.create_table('activity',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('event_type', sa.String(length=50), nullable=False),
+    sa.Column('message', sa.String(length=200), nullable=False),
+    sa.Column('created_at', sa.String(length=30), nullable=False),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('habit',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('frequency', sa.String(length=20), nullable=False),
+    sa.Column('frequency_days', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -63,6 +73,7 @@ def downgrade():
     op.drop_table('habit_completion')
     op.drop_table('user_cat')
     op.drop_table('habit')
+    op.drop_table('activity')
     op.drop_table('user')
     op.drop_table('cat')
     # ### end Alembic commands ###

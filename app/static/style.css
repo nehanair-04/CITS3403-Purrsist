@@ -195,6 +195,7 @@ button:hover {
   display: none;
   justify-content: center;
   align-items: center;
+  padding: 20px;
 }
 
 .modal-overlay.active {
@@ -204,8 +205,11 @@ button:hover {
 .modal {
   background-color: #fff3e8;
   border: 2px solid #e8d8cc;
-  max-width: 500px;
-  width: 50%;
+
+  width: 90%;
+  max-width: 600px;
+  min-width: 320px;
+
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -219,6 +223,24 @@ button:hover {
   width: 100%;
   margin-bottom: 12px;
   font-family: inherit;
+}
+
+.modal input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-hint {
+  font-size: 8px;
+  color: #8a746a;
+  margin-top: -8px;
+  margin-bottom: 10px;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .modal-buttons {
@@ -719,6 +741,40 @@ button:hover {
   padding: 6px 10px;
 }
 
+/* =========================
+   HABIT TAG SYSTEM
+   ========================= */
+
+.habit-tag {
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: white;
+  display: inline-block;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  font-family: "Press Start 2P", sans-serif;
+}
+
+.habit-tag:hover {
+  transform: translateY(-1px);
+}
+
+/* =========================
+     HABIT ROW IMPROVEMENT
+     ========================= */
+
+.habit-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.habit-name {
+  font-size: 12px;
+  flex: 1;
+}
+
 /* || PROFILE PAGE */
 .avatar img {
   width: 100%;
@@ -863,6 +919,38 @@ button:hover {
   padding: 10px;
   text-align: center;
   font-size: 12px;
+}
+
+/* || CAT UNLOCK MODAL */
+
+#cat-unlock-modal .modal {
+  text-align: center;
+}
+
+#cat-unlock-modal .page-title {
+  color: #f7b7a3;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+#cat-unlock-modal .page-subtitle {
+  font-size: 10px;
+  margin-bottom: 20px;
+}
+
+#cat-unlock-modal .modal-buttons {
+  justify-content: center;
+}
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 /* || RESPONSIVE */

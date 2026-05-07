@@ -1,63 +1,218 @@
-function completeHabit(event, habitId) {
-  const url = COMPLETE_HABIT_URL.replace("0", habitId);
+document.addEventListener("DOMContentLoaded", () => {
+  const addModal = document.getElementById("add-habit-modal");
+  const dupModal = document.getElementById("duplicate-modal");
+  const editModal = document.getElementById("edit-habit-modal");
+  const deleteModal = document.getElementById("delete-habit-modal");
 
-  fetch(url, {
-    method: "POST",
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) {
-        const btn = event.target;
+  const form = document.getElementById("add-habit-form");
+  const habitList = document.getElementById("habit-list");
 
-        // update button
-        btn.textContent = "Done";
-        btn.disabled = true;
+  const editName = document.getElementById("edit-name");
+  const editFreq = document.getElementById("edit-frequency");
+  const editCustomDays = document.getElementById("edit-custom-days");
 
-        // update UI
-        updateProgress();
+  const addFreq = document.getElementById("add-frequency");
+  const addCustomDays = document.getElementById("add-custom-days");
 
-        // reward check
-        if (
-          getRemainingHabits() === 0 &&
-          typeof showRewardPopup === "function"
-        ) {
-          showRewardPopup("All habits complete! 🐱");
-        }
-      }
-    })
-    .catch((err) => console.error(err));
-}
+  if (!form) return;
 
-function updateProgress() {
-  const total = document.querySelectorAll(".complete-btn").length;
-  const done = document.querySelectorAll(".complete-btn:disabled").length;
+  let pendingHabit = null;
 
-  const percent = total === 0 ? 0 : Math.floor((done / total) * 100);
-
-  document.getElementById("progress-text").textContent = percent;
-
-  document.getElementById("progress-bar").style.width = `${percent}%`;
-
-  const remaining = 3 - done;
-  const rewardText = document.getElementById("reward-counter");
-
-  if (remaining > 0) {
-    rewardText.textContent = `${remaining} to next reward`;
-  } else {
-    rewardText.textContent = "Reward unlocked!";
+  // ---------------- UTIL ----------------
+  function closeAllModals() {
+    document
+      .querySelectorAll(".modal-overlay")
+      .forEach((m) => m.classList.remove("active"));
   }
-}
 
-function getRemainingHabits() {
-  const total = document.querySelectorAll(".complete-btn").length;
-  const done = document.querySelectorAll(".complete-btn:disabled").length;
+  function resetAddHabitForm() {
+    const form = document.getElementById("add-habit-form");
+    if (form) form.reset();
 
-  return total - done;
-}
+    addCustomDays.style.display = "none";
+    pendingHabit = null;
+  }
 
-window.addEventListener("DOMContentLoaded", () => {
-  const bar = document.getElementById("progress-bar");
-  const initial = bar.dataset.progress;
+  function normalize(str) {
+    return str.trim().toLowerCase();
+  }
 
-  bar.style.width = `${initial}%`;
+  function format(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  function stringToColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return `hsl(${Math.abs(hash % 360)}, 70%, 45%)`;
+  }
+
+  function applyTag(tagEl, frequency) {
+    tagEl.textContent = frequency.toUpperCase();
+    tagEl.style.backgroundColor = stringToColor(frequency);
+  }
+
+  // ---------------- CUSTOM DAYS ----------------
+  addFreq.addEventListener("change", () => {
+    addCustomDays.style.display = addFreq.value === "custom" ? "block" : "none";
+    addCustomDays.required = addFreq.value === "custom";
+  });
+
+  editFreq.addEventListener("change", () => {
+    editCustomDays.style.display =
+      editFreq.value === "custom" ? "block" : "none";
+  });
+
+  // ---------------- INIT TAGS ----------------
+  document.querySelectorAll(".habit-tag").forEach((tag) => {
+    applyTag(tag, tag.textContent.trim().toLowerCase());
+  });
+
+  // ---------------- OPEN ADD MODAL ----------------
+  document.getElementById("add-habit-btn").onclick = () => {
+    closeAllModals();
+    resetAddHabitForm();
+    addModal.classList.add("active");
+  };
+
+  document.getElementById("close-add-modal").onclick = () => {
+    addModal.classList.remove("active");
+    resetAddHabitForm();
+  };
+
+  // ---------------- CREATE HABIT ----------------
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const fd = new FormData(form);
+    const name = normalize(fd.get("name"));
+    const frequency = normalize(fd.get("frequency"));
+
+    fd.set("name", name);
+    fd.set("frequency", frequency);
+
+    pendingHabit = { name, frequency };
+
+    const res = await fetch("/habits/create", { method: "POST", body: fd });
+    const data = await res.json();
+
+    if (data.success) {
+      addHabit(data.name, data.frequency);
+      closeAllModals();
+      resetAddHabitForm();
+      return;
+    }
+
+    if (data.duplicate) {
+      document.getElementById(
+        "dup-message"
+      ).textContent = `"${name}" already exists. Edit it instead?`;
+
+      closeAllModals();
+      dupModal.classList.add("active");
+    }
+  });
+
+  // ---------------- DUPLICATE MODAL ----------------
+  document.getElementById("go-edit").onclick = () => {
+    if (!pendingHabit) return;
+
+    closeAllModals();
+
+    editName.value = pendingHabit.name;
+    editFreq.value = pendingHabit.frequency;
+    editFreq.dispatchEvent(new Event("change"));
+
+    editModal.classList.add("active");
+  };
+
+  document.getElementById("cancel-dup").onclick = () => {
+    dupModal.classList.remove("active");
+    resetAddHabitForm();
+    closeAllModals();
+  };
+
+  // ---------------- EDIT SAVE ----------------
+  document.getElementById("save-edit").onclick = async () => {
+    const name = normalize(editName.value);
+    const frequency = normalize(editFreq.value);
+    const customDays = editCustomDays.value;
+
+    const res = await fetch("/habits/update", {
+      method: "POST",
+      body: new URLSearchParams({
+        name,
+        frequency,
+        custom_days: customDays,
+      }),
+    });
+
+    const data = await res.json();
+
+    const displayFreq =
+      data.frequency === "custom"
+        ? `${data.frequency_days} day${data.frequency_days > 1 ? "s" : ""}`
+        : data.frequency;
+
+    updateHabit(name, displayFreq);
+    closeAllModals();
+  };
+
+  document.getElementById("cancel-edit").onclick = () => closeAllModals();
+
+  // ---------------- DELETE ----------------
+  document.getElementById("delete-habit").onclick = () => {
+    closeAllModals();
+    deleteModal.classList.add("active");
+  };
+
+  document.getElementById("cancel-delete").onclick = () => {
+    deleteModal.classList.remove("active");
+    editModal.classList.add("active");
+  };
+
+  document.getElementById("confirm-delete").onclick = async () => {
+    const name = normalize(editName.value);
+
+    await fetch("/habits/delete", {
+      method: "POST",
+      body: new URLSearchParams({ name }),
+    });
+
+    document.querySelectorAll(".habit-card").forEach((card) => {
+      const n = card.querySelector(".habit-name").textContent.toLowerCase();
+      if (n === name) card.remove();
+    });
+
+    closeAllModals();
+  };
+
+  // ---------------- ADD HABIT UI ----------------
+  function addHabit(name, frequency) {
+    const card = document.createElement("div");
+    card.className = "habit-card";
+
+    card.innerHTML = `
+      <div class="habit-row">
+        <span class="habit-name">${format(name)}</span>
+        <span class="habit-tag"></span>
+        <button class="edit-btn">EDIT</button>
+      </div>
+    `;
+
+    applyTag(card.querySelector(".habit-tag"), frequency);
+    habitList.appendChild(card);
+  }
+
+  function updateHabit(name, frequency) {
+    document.querySelectorAll(".habit-card").forEach((card) => {
+      const n = card.querySelector(".habit-name").textContent.toLowerCase();
+      if (n === name) {
+        card.querySelector(".habit-name").textContent = format(name);
+        applyTag(card.querySelector(".habit-tag"), frequency);
+      }
+    });
+  }
 });

@@ -26,15 +26,14 @@
     <div class="card">
       <h1 class="page-title">Habit Dashboard</h1>
       <p class="page-subtitle">Today's Habits</p>
-
-      <div class="habit-list">
+      <div class="habit-list" id="habit-list">
         {% for habit in habits %}
         <div class="habit-card">
           <p class="habit-text">{{ habit.name }}</p>
 
           <button
-            class="complete-btn"
-            onclick="completeHabit(event, '{{ habit.id }}')"
+            class="complete-btn {% if habit.id in completed_ids %}completed{% endif %}"
+            onclick="completeHabit(event, {{ habit.id }})"
             {%
             if
             habit.id
@@ -44,7 +43,7 @@
             endif
             %}
           >
-            {{ "Done" if habit.id in completed_ids else "Complete" }}
+            {{ "Completed" if habit.id in completed_ids else "Complete" }}
           </button>
         </div>
         {% endfor %}
@@ -52,8 +51,7 @@
 
       <div class="progress-section">
         <p class="progress-label">
-          Today's Progress:
-          <span id="progress-text">{{ progress }}</span>%
+          Today's Progress: <span id="progress-text">{{ progress }}</span>%
         </p>
 
         <div class="progress-bar">
@@ -61,19 +59,31 @@
             class="progress-bar-fill"
             id="progress-bar"
             data-progress="{{ progress }}"
+            style="width: {{ progress }}%"
           ></div>
         </div>
       </div>
 
       <div class="next-reward">
-        <p id="reward-counter">{{ 3 - completed }} to next reward</p>
+        <p id="reward-counter">{{ completed }}/{{ total }} habits done today</p>
       </div>
     </div>
 
-    <script>
-      const COMPLETE_HABIT_URL = "{{ url_for('complete_habit', habit_id=0) }}";
-    </script>
+    <!-- CAT UNLOCK MODAL -->
 
-    <script src="{{ url_for('static', filename='js/habits.js') }}"></script>
+    <div id="reward-modal" class="modal-overlay">
+      <div class="modal">
+        <h2 class="page-title">New Cat!</h2>
+        <p class="page-subtitle" id="reward-text"></p>
+        <div class="modal-buttons">
+          <button onclick="closeRewardModal()" class="add-habit-btn">
+            Yay! 🐱
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/rewards.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
   </body>
 </html>
