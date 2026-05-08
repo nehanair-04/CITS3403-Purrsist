@@ -200,7 +200,7 @@ def create_habit():
     habit.frequency_days = FREQUENCY_DAYS.get(frequency, int(custom_days) if custom_days else 1)
     db.session.add(habit)
     db.session.commit()
-    return {"success": True, "name": habit.name, "frequency": habit.frequency}, 200
+    return {"success": True, "name": habit.name, "frequency": habit.frequency, "frequency_days": habit.frequency_days}, 200
 
 @app.route("/habits/update", methods=["POST"])
 @login_required

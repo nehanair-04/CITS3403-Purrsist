@@ -135,7 +135,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = await res.json();
 
     if (data.success) {
-      addHabit(data.name, data.frequency);
+      const displayFrequency =
+        data.frequency === "custom"
+          ? `${data.frequency_days} day${data.frequency_days > 1 ? "s" : ""}`
+          : data.frequency;
+      addHabit(data.name, displayFrequency);
       closeAllModals();
       resetAddHabitForm();
       return;
