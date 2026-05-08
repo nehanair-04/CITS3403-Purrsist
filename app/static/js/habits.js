@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("add-habit-form");
   const habitList = document.getElementById("habit-list");
 
+  const addHabitName = document.getElementById("add-habit-name");
+  const habitValidationMessage = document.getElementById(
+    "habit-validation-message"
+  );
+
   const editName = document.getElementById("edit-name");
   const editFreq = document.getElementById("edit-frequency");
   const editCustomDays = document.getElementById("edit-custom-days");
@@ -19,6 +24,18 @@ document.addEventListener("DOMContentLoaded", () => {
   let pendingHabit = null;
 
   // ---------------- UTIL ----------------
+  function showHabitError(message) {
+    if (!habitValidationMessage) return;
+    habitValidationMessage.textContent = message;
+    habitValidationMessage.style.display = "block";
+  }
+
+  function clearHabitError() {
+    if (!habitValidationMessage) return;
+    habitValidationMessage.textContent = "";
+    habitValidationMessage.style.display = "none";
+  }
+
   function closeAllModals() {
     document
       .querySelectorAll(".modal-overlay")
@@ -29,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("add-habit-form");
     if (form) form.reset();
 
+    clearHabitError();
     addCustomDays.style.display = "none";
     pendingHabit = null;
   }
@@ -57,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------- CUSTOM DAYS ----------------
   addFreq.addEventListener("change", () => {
     addCustomDays.style.display = addFreq.value === "custom" ? "block" : "none";
-    addCustomDays.required = addFreq.value === "custom";
   });
 
   editFreq.addEventListener("change", () => {
@@ -85,10 +102,29 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------- CREATE HABIT ----------------
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    clearHabitError();
 
     const fd = new FormData(form);
-    const name = normalize(fd.get("name"));
-    const frequency = normalize(fd.get("frequency"));
+    const name = normalize(fd.get("name") || "");
+    const frequency = normalize(fd.get("frequency") || "");
+    const customDays = (fd.get("custom_days") || "").trim();
+
+    if (!name) {
+      showHabitError("Please enter a valid habit name.");
+      addHabitName.focus();
+      return;
+    }
+
+    if (!frequency) {
+      showHabitError("Please select a frequency.");
+      return;
+    }
+
+    if (frequency === "custom" && (!customDays || Number(customDays) < 1)) {
+      showHabitError("Please enter a valid number of days.");
+      addCustomDays.focus();
+      return;
+    }
 
     fd.set("name", name);
     fd.set("frequency", frequency);
@@ -112,7 +148,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       closeAllModals();
       dupModal.classList.add("active");
+      return;
     }
+    showHabitError(data.message || "Could not create habit. Please try again.");
   });
 
   // ---------------- DUPLICATE MODAL ----------------
