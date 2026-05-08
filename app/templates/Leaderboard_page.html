@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Purrsist Leaderboard</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+
+  <body class="leaderboard-page">
+    {% include "navbar.html" %}
+
+    <div class="card leaderboard-card">
+      <h1 class="page-title">Leaderboard</h1>
+
+      <div class="leaderboard-layout">
+        <!-- RANKING -->
+        <div class="leaderboard-section">
+          <h2 class="leaderboard-title">Ranking</h2>
+
+          <div class="leaderboard-list">
+            {% for user in leaderboard %}
+            <div
+              class="leaderboard-entry {% if loop.index == 1 %}first-place{% elif loop.index == 2 %}second-place{% elif loop.index == 3 %}third-place{% endif %}"
+            >
+              <span class="friend-name">
+                #{{ loop.index }} {{ user.username }}
+              </span>
+
+              <span class="friend-streak">
+                {{ user.streak }} day{% if user.streak != 1 %}s{% endif %}
+              </span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- ACTIVITY FEED -->
+        <div class="leaderboard-section">
+          <h2 class="leaderboard-title">Friends' Activity</h2>
+
+          <div class="activity-feed">
+            {% if activities and activities|length > 0 %} {% for activity in
+            activities %}
+            <div class="activity-item">{{ activity.message }}</div>
+            {% endfor %} {% else %}
+            <div class="activity-item empty-state">No friends added yet</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

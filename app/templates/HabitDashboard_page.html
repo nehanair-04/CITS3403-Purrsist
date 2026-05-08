@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Purrsist Habit Dashboard</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+
+  <body class="habit-dashboard-page">
+    {% include "navbar.html" %}
+
+    <div class="card">
+      <h1 class="page-title">Habit Dashboard</h1>
+      <p class="page-subtitle">Today's Habits</p>
+      <div class="habit-list" id="habit-list">
+        {% for habit in habits %}
+        <div class="habit-card">
+          <p class="habit-text">{{ habit.name }}</p>
+
+          <button
+            class="complete-btn {% if habit.id in completed_ids %}completed{% endif %}"
+            onclick="completeHabit(event, {{ habit.id }})"
+            {%
+            if
+            habit.id
+            in
+            completed_ids
+            %}disabled{%
+            endif
+            %}
+          >
+            {{ "Completed" if habit.id in completed_ids else "Complete" }}
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="progress-section">
+        <p class="progress-label">
+          Today's Progress: <span id="progress-text">{{ progress }}</span>%
+        </p>
+
+        <div class="progress-bar">
+          <div
+            class="progress-bar-fill"
+            id="progress-bar"
+            data-progress="{{ progress }}"
+            style="width: {{ progress }}%"
+          ></div>
+        </div>
+      </div>
+
+      <div class="next-reward">
+        <p id="reward-counter">{{ completed }}/{{ total }} habits done today</p>
+      </div>
+    </div>
+
+    <!-- CAT UNLOCK MODAL -->
+
+    <div id="reward-modal" class="modal-overlay">
+      <div class="modal">
+        <h2 class="page-title">New Cat!</h2>
+        <p class="page-subtitle" id="reward-text"></p>
+        <div class="modal-buttons">
+          <button onclick="closeRewardModal()" class="add-habit-btn">
+            Yay! 🐱
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/rewards.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  </body>
+</html>

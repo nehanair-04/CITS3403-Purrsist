@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Purrsist Cat Shelter</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="cat-shelter-page">
+    {% include "navbar.html" %}
+    <div class="card">
+      <h1 class="page-title">Cat Shelter</h1>
+      <p class="page-subtitle">Your Collection</p>
+      <div class="cat-grid">
+        {% for cat in cats %}
+        <div
+          class="cat-slot {% if cat.rarity == 'rare' %}rare{% endif %} {% if cat.id not in owned_cat_ids %}empty{% endif %}"
+        >
+          <div class="cat-image-placeholder">
+            <img
+              src="{{ url_for('static', filename='images/cat-example.jpg') }}"
+              alt="{{ cat.name }}"
+            />
+          </div>
+          <div class="cat-name-tag">{{ cat.name }}</div>
+          <div class="rarity-label">{{ cat.rarity | capitalize }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="happiness-section">
+        <p class="happiness-label">Cat Happiness</p>
+        <div class="happiness-status">
+          <div
+            class="happiness-bar-fill"
+            style="width: {{ happiness }}%;"
+          ></div>
+        </div>
+        <p class="page-subtitle">{{ happiness }}%</p>
+        <p class="page-subtitle">
+          Happiness is based on the user's streak, cat collection and daily
+          activity.
+        </p>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/cat_happiness.js') }}"></script>
+  </body>
+</html>
