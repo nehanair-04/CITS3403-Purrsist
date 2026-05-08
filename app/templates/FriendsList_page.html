@@ -52,8 +52,8 @@
           <a href="#" class="friend-item">
             <div class="avatar">
               <img
-                src="{{ url_for('static', filename='images/profile-placeholder.png') }}"
-                alt="Profile placeholder"
+                src="{{ url_for('static', filename=friend.profile_image or 'images/default-profile.jpg') }}"
+                alt="{{ friend.username }} profile picture"
               />
             </div>
 
