@@ -1,5 +1,5 @@
 import os
-from flask import render_template, request, redirect, url_for, current_app
+from flask import render_template, request, redirect, url_for, current_app, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 from app import app, db
@@ -259,6 +259,24 @@ def shelter():
     cats_score = min(cats_owned * 5, 20)
     happiness = max(0, min(progress_score + streak_score + cats_score, 100))
     return render_template("CatShelter_page.html", cats=all_cats, owned_cat_ids=owned_cat_ids, happiness=happiness)
+
+@app.route("/cats", methods=["GET"])
+@login_required
+def get_cats():
+    user_cats = UserCat.query.filter_by(user_id=current_user.id).all()
+
+    cats = []
+    for user_cat in user_cats:
+        cat = db.session.get(Cat, user_cat.cat_id)
+        if cat:
+            cats.append({
+                "id": cat.id,
+                "name": cat.name,
+                "rarity": cat.rarity,
+                "unlock_condition": cat.unlock_condition
+            })
+
+    return jsonify(cats)
 
 @app.route("/profile")
 @login_required
