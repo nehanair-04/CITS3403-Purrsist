@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Purrsist Friend's Profile</title>
+    <title>{{ user.username }}'s Profile</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
       rel="stylesheet"
@@ -14,47 +14,73 @@
     />
   </head>
 
-  <body class="friend-profile-page">
+  <body class="profile-page">
+    {% include "navbar.html" %}
+
     <div class="card profile-card">
-      <h1 class="page-title">Friend's Profile</h1>
+      <h1 class="page-title">{{ user.username }}'s Profile</h1>
       <div class="profile-header">
         <div class="avatar">
-          <img src="images/profile-placeholder.png" alt="Profile placeholder" />
+          <img
+            src="{{ url_for('static', filename=user.profile_image or 'images/default-profile.jpg') }}"
+            alt="{{ user.username }} profile picture"
+          />
         </div>
-        <p class="profile-name">Friend Name</p>
+        <p class="profile-name">{{ user.username }}</p>
       </div>
 
       <div class="profile-stats">
         <div class="stat-item">
           <p class="stat-label">Habits Completed</p>
-          <p class="stat-value">X</p>
+          <p class="stat-value">{{ stats.habits_completed }}</p>
         </div>
         <div class="stat-item">
           <p class="stat-label">Longest Streak</p>
-          <p class="stat-value">X days</p>
+          <p class="stat-value">{{ stats.longest_streak }} days</p>
         </div>
         <div class="stat-item">
           <p class="stat-label">Cats Collected</p>
-          <p class="stat-value">X</p>
+          <p class="stat-value">{{ stats.cats_collected }}</p>
         </div>
       </div>
 
       <div class="streak-display">
-        <span class="streak-days">X days</span>
+        <p class="stat-label">Current Streak</p>
+        <span class="streak-days">{{ stats.current_streak }} days</span>
       </div>
 
       <div class="history-section">
-        <h2 class="history-title">History</h2>
+        <h2 class="history-title">Habit Summary</h2>
 
-        <div class="history-grid">
-          <div class="history-day">Day1</div>
-          <div class="history-day">Day2</div>
-          <div class="history-day">Day3</div>
-          <div class="history-day">Day4</div>
-          <div class="history-day">Day5</div>
-          <div class="history-day">Day6</div>
-          <div class="history-day">Day7</div>
-        </div>
+        {% if habit_summary %}
+          <div class="profile-stats">
+            {% for habit in habit_summary %}
+              <div class="stat-item">
+                <span class="stat-label">{{ habit.name }}</span>
+                <span class="stat-value">Completed {{ habit.completed_times }} times</span>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="stat-label">No habit summary available yet.</p>
+        {% endif %}
+      </div>
+
+      <div class="history-section">
+        <h2 class="history-title">Cat Collection Summary</h2>
+
+        {% if cat_collection %}
+          <div class="profile-stats">
+            {% for cat in cat_collection %}
+              <div class="stat-item">
+                <span class="stat-label">{{ cat.name }}</span>
+                <span class="stat-value">{{ cat.rarity }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="stat-label">No cats collected yet.</p>
+        {% endif %}
       </div>
     </div>
   </body>

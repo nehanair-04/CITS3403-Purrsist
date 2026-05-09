@@ -285,6 +285,54 @@ def profile():
         stats=stats
     )
 
+@app.route("/profile/<int:user_id>")
+@login_required
+def friend_profile(user_id):
+    from app.models import get_streak
+
+    user = User.query.get_or_404(user_id)
+
+    habits = Habit.query.filter_by(user_id=user.id).all()
+    habits_completed = 0
+    habit_summary = []
+
+    for habit in habits:
+        completed_times = HabitCompletion.query.filter_by(habit_id=habit.id).count()
+        habits_completed += completed_times
+        habit_summary.append({
+            "name": habit.name,
+            "completed_times": completed_times
+        })
+
+    user_cats = UserCat.query.filter_by(user_id=user.id).all()
+    cats_collected = len(user_cats)
+
+    cat_collection = []
+    for user_cat in user_cats[:3]:
+        cat = db.session.get(Cat, user_cat.cat_id)
+        if cat:
+            cat_collection.append({
+                "name": cat.name,
+                "rarity": cat.rarity
+            })
+
+    streak = get_streak(user.id)
+
+    stats = {
+        "habits_completed": habits_completed,
+        "longest_streak": streak,
+        "current_streak": streak,
+        "cats_collected": cats_collected
+    }
+
+    return render_template(
+        "FriendsProfile_page.html",
+        user=user,
+        habit_summary=habit_summary,
+        cat_collection=cat_collection,
+        stats=stats
+    )
+
 @app.route("/friends")
 @login_required
 def friends():
