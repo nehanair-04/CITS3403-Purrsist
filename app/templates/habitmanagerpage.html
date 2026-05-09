@@ -40,18 +40,25 @@
     <div id="add-habit-modal" class="modal-overlay">
       <div class="modal">
         <h2 class="page-title">Add Habit</h2>
-        <form id="add-habit-form">
+        <form id="add-habit-form" novalidate>
           <input
             name="name"
+            id="add-habit-name"
             class="input-field"
             placeholder="Habit name"
-            required
           />
+
+          <p
+            id="habit-validation-message"
+            class="page-subtitle"
+            role="alert"
+            style="display: none"
+          ></p>
+
           <select
             name="frequency"
             id="add-frequency"
             class="input-field"
-            required
           >
             <option value="daily">Daily</option>
             <option value="weekly">Weekly</option>

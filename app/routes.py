@@ -158,10 +158,36 @@ def create_habit():
     name = " ".join(request.form.get("name", "").strip().lower().split())
     frequency = request.form.get("frequency", "").strip()
     custom_days = request.form.get("custom_days", "").strip()
-    if not name or not frequency:
-        return {"success": False}, 400
-    if frequency == "custom" and custom_days:
-        days = int(custom_days)
+    if not name:
+        return {
+            "success": False,
+            "message": "Please enter a valid habit name."
+        }, 400
+    if not frequency:
+        return {
+            "success": False,
+            "message": "Please select a frequency."
+        }, 400
+    if frequency == "custom":
+        if not custom_days:
+            return {
+                "success": False,
+                "message": "Please enter the number of days for a custom frequency."
+            }, 400
+        try:
+            days = int(custom_days)
+        except ValueError:
+            return {
+                "success": False,
+                "message": "Custom frequency must be a valid number."
+            }, 400
+        
+        if days < 1:
+            return {
+                "success": False,
+                "message": "Custom frequency must be at least 1 day."
+            }, 400
+        
         frequency = DAYS_TO_FREQUENCY.get(days, "custom")
         custom_days = str(days)
     existing = Habit.query.filter(
@@ -169,12 +195,12 @@ def create_habit():
         func.lower(Habit.name) == name
     ).first()
     if existing:
-        return {"success": False, "duplicate": True, "name": existing.name, "frequency": existing.frequency}, 409
+        return {"success": False, "duplicate": True, "message": f'"{existing.name}" already exists.', "name": existing.name, "frequency": existing.frequency}, 409
     habit = Habit(user_id=current_user.id, name=name, frequency=frequency)
     habit.frequency_days = FREQUENCY_DAYS.get(frequency, int(custom_days) if custom_days else 1)
     db.session.add(habit)
     db.session.commit()
-    return {"success": True, "name": habit.name, "frequency": habit.frequency}, 200
+    return {"success": True, "name": habit.name, "frequency": habit.frequency, "frequency_days": habit.frequency_days}, 200
 
 @app.route("/habits/update", methods=["POST"])
 @login_required
