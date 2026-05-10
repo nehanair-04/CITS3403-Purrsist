@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 from app import app, db
 from app.models import User, Habit, HabitCompletion, Cat, UserCat
-from datetime import date
+from datetime import date, timedelta
 from sqlalchemy import func
 
 @app.route("/")
@@ -52,33 +52,6 @@ def allowed_file(filename):
         "." in filename
         and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
     )
-
-
-@app.route("/profile/upload-picture", methods=["POST"])
-@login_required
-def upload_profile_picture():
-    if "profile_picture" not in request.files:
-        return redirect(url_for("profile"))
-
-    file = request.files["profile_picture"]
-
-    if file.filename == "":
-        return redirect(url_for("profile"))
-
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        filename = f"user_{current_user.id}_{filename}"
-
-        upload_folder = current_app.config["UPLOAD_FOLDER"]
-        os.makedirs(upload_folder, exist_ok=True)
-
-        file_path = os.path.join(upload_folder, filename)
-        file.save(file_path)
-
-        current_user.profile_image = f"uploads/profile_pictures/{filename}"
-        db.session.commit()
-
-    return redirect(url_for("profile"))
 
 # frequency helper
 FREQUENCY_DAYS = {
@@ -303,13 +276,77 @@ def profile():
         "current_streak": streak,
         "cats_collected": cats_collected
     }
+
+    history = []
+    first_completion = (
+        HabitCompletion.query
+        .join(Habit, Habit.id == HabitCompletion.habit_id)
+        .filter(Habit.user_id == current_user.id)
+        .order_by(HabitCompletion.date_completed.asc())
+        .first()
+    )
+
+    if first_completion:
+        start_date = date.fromisoformat(first_completion.date_completed)
+        today = date.today()
+
+        days_count = (today - start_date).days
+
+        for i in range(days_count + 1):
+            history_date = start_date + timedelta(days=i)
+            history_date_str = str(history_date)
+
+            completed_count = (
+                HabitCompletion.query
+                .join(Habit, Habit.id == HabitCompletion.habit_id)
+                .filter(
+                    Habit.user_id == current_user.id,
+                    HabitCompletion.date_completed == history_date_str
+                )
+                .count()
+            )
+
+            history.append({
+                "date": history_date.strftime("%m/%d"),
+                "day_name": history_date.strftime("%a"),
+                "completed_count": completed_count
+            })
+    
     return render_template("Profile_page.html",
         user=current_user,
         habits_completed=habits_completed,
         habit_summary=habit_summary,
         cat_collection=cat_collection,
-        stats=stats
+        stats=stats,
+        history=history
     )
+
+
+@app.route("/profile/upload-picture", methods=["POST"])
+@login_required
+def upload_profile_picture():
+    if "profile_picture" not in request.files:
+        return redirect(url_for("profile"))
+
+    file = request.files["profile_picture"]
+
+    if file.filename == "":
+        return redirect(url_for("profile"))
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filename = f"user_{current_user.id}_{filename}"
+
+        upload_folder = current_app.config["UPLOAD_FOLDER"]
+        os.makedirs(upload_folder, exist_ok=True)
+
+        file_path = os.path.join(upload_folder, filename)
+        file.save(file_path)
+
+        current_user.profile_image = f"uploads/profile_pictures/{filename}"
+        db.session.commit()
+
+    return redirect(url_for("profile"))
 
 @app.route("/profile/<int:user_id>")
 @login_required
