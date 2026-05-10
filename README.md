@@ -85,4 +85,28 @@ The app uses a pixel art aesthetic with a soft pink and cream colour palette. Ke
 
 ## How to Run Tests
 
-To be updated
+This project uses Python’s built-in unittest framework for both unit testing and Selenium testing.
+
+1. Install test dependencies
+   Make sure your virtual environment is activated, then install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+2. Run unit tests
+   To run all unit tests:
+
+```bash
+python -m unittest tests.unittests -v
+```
+
+3. Run Selenium tests
+   Selenium tests simulate real user interactions with the web application using a headless Chrome browser.
+   Run them with:
+
+```bash
+python -m unittest tests.seleniumtests -v
+```
+
+This project also includes automate tests with GitHub workflows.
