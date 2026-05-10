@@ -852,6 +852,32 @@ button:hover {
   margin-bottom: 0;
 }
 
+#friend-search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.friend-search-result {
+  width: 100%;
+  text-align: left;
+  background-color: #fffdfb;
+  color: #5e4b43;
+  border: 2px solid #e8d8cc;
+  padding: 8px;
+  font-size: 8px;
+}
+
+.friend-search-result:hover {
+  background-color: #f0e0d6;
+}
+
+.friend-search-result:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .submit-friend-btn {
   width: auto;
   height: 36px;

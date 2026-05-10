@@ -44,16 +44,19 @@
           </div>
         </div>
 
-        <!-- ACTIVITY FEED -->
+        <!-- DRIEND'S ACTIVITY -->
         <div class="leaderboard-section">
           <h2 class="leaderboard-title">Friends' Activity</h2>
 
           <div class="activity-feed">
-            {% if activities and activities|length > 0 %} {% for activity in
-            activities %}
-            <div class="activity-item">{{ activity.message }}</div>
-            {% endfor %} {% else %}
-            <div class="activity-item empty-state">No friends added yet</div>
+            {% if friend_activity and friend_activity|length > 0 %}
+              {% for activity in friend_activity %}
+                <div class="activity-item">
+                  {{ activity.username }} completed {{ activity.habit_name }} on {{ activity.date }}
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="activity-item empty-state">No recent friend activity yet</div>
             {% endif %}
           </div>
         </div>
