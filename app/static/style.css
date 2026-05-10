@@ -493,12 +493,19 @@ button:hover {
   border-radius: 6px;
   padding: 6px;
   margin-bottom: 6px;
+
+  width: 150px;
+  height: 160px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cat-image-placeholder img {
-  width: 140px;
-  height: 150px;
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   border-radius: 4px;
 }
 
@@ -1118,9 +1125,15 @@ img {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .cat-image-placeholder {
+    width: 130px;
+    height: 140px;
+  }
+
   .cat-image-placeholder img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: contain;
   }
 
   .leaderboard-layout {
