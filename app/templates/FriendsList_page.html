@@ -33,21 +33,31 @@
         <div class="add-friend-form">
           <input
             type="text"
+            id="friend-search-input"
             class="input-field"
             placeholder="Enter username"
             aria-label="Enter username"
           />
-          <button class="submit-friend-btn">
+          <button type="button" id="add-friend-btn" class="submit-friend-btn">
             <i class="bi bi-person-plus"></i>
             Add
           </button>
         </div>
+
+        <p
+          id="friend-message"
+          class="page-subtitle"
+          role="alert"
+          style="display: none"
+        ></p>
+
+        <div id="friend-search-results"></div>
       </div>
 
       <div class="friends-section">
         <h2 class="section-title">Your Friends</h2>
 
-        <div class="friends-list">
+        <div class="friends-list" id="friends-list">
           {% for friend in friends %}
           <a href="{{ url_for('friend_profile', user_id=friend.id) }}" class="friend-item">
             <div class="avatar">
@@ -63,5 +73,7 @@
         </div>
       </div>
     </div>
+
+    <script src="{{ url_for('static', filename='js/friends.js') }}"></script>
   </body>
 </html>

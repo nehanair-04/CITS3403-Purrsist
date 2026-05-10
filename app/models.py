@@ -40,6 +40,15 @@ class UserCat(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     cat_id = db.Column(db.Integer, db.ForeignKey("cat.id"), nullable=False)
 
+class Friendship(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    friend_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "friend_id", name="unique_friendship"),
+    )
+
 class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)

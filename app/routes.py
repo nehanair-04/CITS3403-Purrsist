@@ -3,7 +3,7 @@ from flask import render_template, request, redirect, url_for, current_app, json
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 from app import app, db
-from app.models import User, Habit, HabitCompletion, Cat, UserCat
+from app.models import User, Habit, HabitCompletion, Cat, UserCat, Friendship
 from datetime import date, timedelta
 from sqlalchemy import func
 
@@ -399,8 +399,112 @@ def friend_profile(user_id):
 @app.route("/friends")
 @login_required
 def friends():
-    all_users = User.query.limit(5).all()
-    return render_template("FriendsList_page.html", friends=all_users)
+    friendships = Friendship.query.filter_by(user_id=current_user.id).all()
+
+    friends = []
+    for friendship in friendships:
+        friend = db.session.get(User, friendship.friend_id)
+        if friend:
+            friends.append(friend)
+
+    return render_template("FriendsList_page.html", friends=friends)
+
+@app.route("/friends/search")
+@login_required
+def search_friends():
+    query = request.args.get("q", "").strip()
+
+    if not query:
+        return jsonify([])
+
+    users = (
+        User.query
+        .filter(
+            User.username.ilike(f"%{query}%"),
+            User.id != current_user.id
+        )
+        .limit(10)
+        .all()
+    )
+
+    results = []
+
+    for user in users:
+        already_friend = Friendship.query.filter_by(
+            user_id=current_user.id,
+            friend_id=user.id
+        ).first() is not None
+
+        results.append({
+            "id": user.id,
+            "username": user.username,
+            "profile_image": user.profile_image,
+            "already_friend": already_friend
+        })
+
+    return jsonify(results)
+
+@app.route("/friends/add", methods=["POST"])
+@login_required
+def add_friend():
+    friend_id = request.form.get("friend_id")
+
+    if not friend_id:
+        return jsonify({
+            "success": False,
+            "message": "User not found."
+        }), 400
+
+    try:
+        friend_id = int(friend_id)
+    except ValueError:
+        return jsonify({
+            "success": False,
+            "message": "Invalid user."
+        }), 400
+
+    friend = db.session.get(User, friend_id)
+
+    if not friend:
+        return jsonify({
+            "success": False,
+            "message": "User not found."
+        }), 404
+
+    if friend.id == current_user.id:
+        return jsonify({
+            "success": False,
+            "message": "You cannot add yourself."
+        }), 400
+
+    existing = Friendship.query.filter_by(
+        user_id=current_user.id,
+        friend_id=friend.id
+    ).first()
+
+    if existing:
+        return jsonify({
+            "success": False,
+            "message": "This user is already your friend."
+        }), 409
+
+    friendship = Friendship(
+        user_id=current_user.id,
+        friend_id=friend.id
+    )
+
+    db.session.add(friendship)
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Friend added.",
+        "friend": {
+            "id": friend.id,
+            "username": friend.username,
+            "profile_image": friend.profile_image
+        }
+    })
 
 @app.route("/leaderboard")
 @login_required
