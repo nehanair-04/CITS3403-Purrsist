@@ -512,6 +512,7 @@ def leaderboard():
     from app.models import get_streak
 
     users = [current_user]
+    friend_activity = []
 
     friendships = Friendship.query.filter_by(user_id=current_user.id).all()
 
@@ -519,6 +520,24 @@ def leaderboard():
         friend = db.session.get(User, friendship.friend_id)
         if friend:
             users.append(friend)
+
+            recent_completions = (
+                HabitCompletion.query
+                .join(Habit, Habit.id == HabitCompletion.habit_id)
+                .filter(Habit.user_id == friend.id)
+                .order_by(HabitCompletion.date_completed.desc())
+                .limit(3)
+                .all()
+            )
+
+            for completion in recent_completions:
+                habit = db.session.get(Habit, completion.habit_id)
+                if habit:
+                    friend_activity.append({
+                        "username": friend.username,
+                        "habit_name": habit.name,
+                        "date": completion.date_completed
+                    })
 
     leaderboard_data = []
 
@@ -531,8 +550,10 @@ def leaderboard():
         })
 
     leaderboard_data.sort(key=lambda x: x["streak"], reverse=True)
+    friend_activity.sort(key=lambda x: x["date"], reverse=True)
 
     return render_template(
         "Leaderboard_page.html",
-        leaderboard=leaderboard_data
+        leaderboard=leaderboard_data,
+        friend_activity=friend_activity
     )
