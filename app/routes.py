@@ -72,18 +72,53 @@ DAYS_TO_FREQUENCY = {
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    from datetime import date, timedelta
-    habits = Habit.query.filter_by(user_id=current_user.id).all()
-    today = str(date.today())
+    today_date = date.today()
+    today = str(today_date)
+
+    all_habits = Habit.query.filter_by(user_id=current_user.id).all()
+    habits = []
+
+    for habit in all_habits:
+        last_completion = (
+            HabitCompletion.query
+            .filter_by(habit_id=habit.id)
+            .order_by(HabitCompletion.date_completed.desc())
+            .first()
+        )
+
+        if not last_completion:
+            habits.append(habit)
+            continue
+
+        last_completed_date = date.fromisoformat(last_completion.date_completed)
+        days_since_completed = (today_date - last_completed_date).days
+
+        # Keep today's completed habits visible on dashboard
+        if last_completed_date == today_date:
+            habits.append(habit)
+            continue
+
+        # Show the habit again only when its frequency interval has passed
+        if days_since_completed >= habit.frequency_days:
+            habits.append(habit)
 
     completed_ids = {
-        hc.habit_id for hc in HabitCompletion.query.filter_by(date_completed=today).all()
+        hc.habit_id
+        for hc in HabitCompletion.query
+        .join(Habit, Habit.id == HabitCompletion.habit_id)
+        .filter(
+            Habit.user_id == current_user.id,
+            HabitCompletion.date_completed == today
+        )
+        .all()
     }
+
     total = len(habits)
     completed = len([h for h in habits if h.id in completed_ids])
     progress = int((completed / total) * 100) if total > 0 else 0
 
-    return render_template("HabitDashboard_page.html",
+    return render_template(
+        "HabitDashboard_page.html",
         habits=habits,
         completed_ids=completed_ids,
         progress=progress,
