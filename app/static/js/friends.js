@@ -1,27 +1,35 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const input = document.getElementById("friend-search-input");
-  const addButton = document.getElementById("add-friend-btn");
-  const message = document.getElementById("friend-message");
-  const resultsBox = document.getElementById("friend-search-results");
-  const friendsList = document.getElementById("friends-list");
+$(document).ready(function () {
+  const $input = $("#friend-search-input");
+  const $addButton = $("#add-friend-btn");
+  const $message = $("#friend-message");
+  const $resultsBox = $("#friend-search-results");
+  const $friendsList = $("#friends-list");
 
-  if (!input || !addButton || !message || !resultsBox || !friendsList) return;
+  if (
+    !$input.length ||
+    !$addButton.length ||
+    !$message.length ||
+    !$resultsBox.length ||
+    !$friendsList.length
+  ) {
+    return;
+  }
 
   let selectedUser = null;
 
   function showMessage(text, isError = true) {
-    message.textContent = text;
-    message.style.display = "block";
-    message.style.color = isError ? "#c0392b" : "#5e4b43";
+    $message
+      .text(text)
+      .css("display", "block")
+      .css("color", isError ? "#c0392b" : "#5e4b43");
   }
 
   function clearMessage() {
-    message.textContent = "";
-    message.style.display = "none";
+    $message.text("").hide();
   }
 
   function clearResults() {
-    resultsBox.innerHTML = "";
+    $resultsBox.empty();
   }
 
   function renderResults(users) {
@@ -33,19 +41,23 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    users.forEach((user) => {
-      const result = document.createElement("button");
-      result.type = "button";
-      result.className = "friend-search-result";
-      result.textContent = user.already_friend
-        ? `${user.username} (already added)`
-        : user.username;
+    users.forEach(function (user) {
+      const $result = $("<button>")
+        .attr("type", "button")
+        .addClass("friend-search-result")
+        .text(
+          user.already_friend
+            ? `${user.username} (already added)`
+            : user.username
+        );
 
-      result.disabled = user.already_friend;
+      if (user.already_friend) {
+        $result.prop("disabled", true);
+      }
 
-      result.addEventListener("click", () => {
+      $result.on("click", function () {
         selectedUser = user;
-        input.value = user.username;
+        $input.val(user.username);
         clearResults();
         clearMessage();
 
@@ -54,12 +66,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      resultsBox.appendChild(result);
+      $resultsBox.append($result);
     });
   }
 
-  async function searchUsers() {
-    const query = input.value.trim();
+  function searchUsers() {
+    const query = $input.val().trim();
 
     selectedUser = null;
     clearMessage();
@@ -69,77 +81,106 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const res = await fetch(`/friends/search?q=${encodeURIComponent(query)}`);
-    const users = await res.json();
-
-    renderResults(users);
+    $.ajax({
+      url: "/friends/search",
+      method: "GET",
+      data: { q: query },
+      success: function (users) {
+        renderResults(users);
+      },
+      error: function () {
+        showMessage("Could not search users. Please try again.");
+      },
+    });
   }
 
-  async function addFriend() {
-    const query = input.value.trim();
+  function addFriend() {
+    const query = $input.val().trim();
 
     if (!query) {
       showMessage("Please enter a username.");
       return;
     }
 
-    if (!selectedUser) {
-      const res = await fetch(`/friends/search?q=${encodeURIComponent(query)}`);
-      const users = await res.json();
+    function sendAddRequest(user) {
+      $.ajax({
+        url: "/friends/add",
+        method: "POST",
+        data: { friend_id: user.id },
+        success: function (data) {
+          if (!data.success) {
+            showMessage(data.message || "Could not add friend.");
+            return;
+          }
 
-      if (users.length === 0) {
-        showMessage("User not found.");
-        return;
-      }
+          showMessage("Friend added.", false);
+          $addButton.text("Added");
 
-      selectedUser = users[0];
+          const friend = data.friend;
+
+          const $friendItem = $("<a>")
+            .attr("href", `/profile/${friend.id}`)
+            .addClass("friend-item");
+
+          const $avatar = $("<div>").addClass("avatar");
+          const $image = $("<img>")
+            .attr(
+              "src",
+              `/static/${friend.profile_image || "images/default-profile.jpg"}`
+            )
+            .attr("alt", `${friend.username} profile picture`);
+
+          const $name = $("<span>")
+            .addClass("friend-name")
+            .text(friend.username);
+
+          $avatar.append($image);
+          $friendItem.append($avatar, $name);
+          $friendsList.append($friendItem);
+
+          $input.val("");
+          selectedUser = null;
+          clearResults();
+
+          setTimeout(function () {
+            $addButton.html('<i class="bi bi-person-plus"></i> Add');
+          }, 1200);
+        },
+        error: function (xhr) {
+          const response = xhr.responseJSON;
+          showMessage(
+            response && response.message
+              ? response.message
+              : "Could not add friend."
+          );
+        },
+      });
     }
 
-    const formData = new FormData();
-    formData.append("friend_id", selectedUser.id);
-
-    const res = await fetch("/friends/add", {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await res.json();
-
-    if (!data.success) {
-      showMessage(data.message || "Could not add friend.");
+    if (selectedUser) {
+      sendAddRequest(selectedUser);
       return;
     }
 
-    showMessage("Friend added.", false);
-    addButton.textContent = "Added";
+    $.ajax({
+      url: "/friends/search",
+      method: "GET",
+      data: { q: query },
+      success: function (users) {
+        if (users.length === 0) {
+          showMessage("User not found.");
+          return;
+        }
 
-    const friend = data.friend;
-
-    const friendItem = document.createElement("a");
-    friendItem.href = `/profile/${friend.id}`;
-    friendItem.className = "friend-item";
-
-    friendItem.innerHTML = `
-      <div class="avatar">
-        <img
-          src="/static/${friend.profile_image || "images/default-profile.jpg"}"
-          alt="${friend.username} profile picture"
-        />
-      </div>
-      <span class="friend-name">${friend.username}</span>
-    `;
-
-    friendsList.appendChild(friendItem);
-
-    input.value = "";
-    selectedUser = null;
-    clearResults();
-
-    setTimeout(() => {
-      addButton.innerHTML = '<i class="bi bi-person-plus"></i> Add';
-    }, 1200);
+        selectedUser = users[0];
+        sendAddRequest(selectedUser);
+      },
+      error: function () {
+        showMessage("Could not search users. Please try again.");
+      },
+    });
   }
 
-  input.addEventListener("input", searchUsers);
-  addButton.addEventListener("click", addFriend);
+  $input.on("input", searchUsers);
+  $addButton.on("click", addFriend);
 });
