@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 from app import db
 from app.blueprints import main
-from app.models import User, Habit, HabitCompletion, Cat, UserCat
+from app.models import User, Habit, HabitCompletion, Cat, UserCat, Friendship
 from datetime import date, timedelta
 from sqlalchemy import func
 
@@ -73,18 +73,53 @@ DAYS_TO_FREQUENCY = {
 @main.route("/dashboard")
 @login_required
 def dashboard():
-    from datetime import date, timedelta
-    habits = Habit.query.filter_by(user_id=current_user.id).all()
-    today = str(date.today())
+    today_date = date.today()
+    today = str(today_date)
+
+    all_habits = Habit.query.filter_by(user_id=current_user.id).all()
+    habits = []
+
+    for habit in all_habits:
+        last_completion = (
+            HabitCompletion.query
+            .filter_by(habit_id=habit.id)
+            .order_by(HabitCompletion.date_completed.desc())
+            .first()
+        )
+
+        if not last_completion:
+            habits.append(habit)
+            continue
+
+        last_completed_date = date.fromisoformat(last_completion.date_completed)
+        days_since_completed = (today_date - last_completed_date).days
+
+        # Keep today's completed habits visible on dashboard
+        if last_completed_date == today_date:
+            habits.append(habit)
+            continue
+
+        # Show the habit again only when its frequency interval has passed
+        if days_since_completed >= habit.frequency_days:
+            habits.append(habit)
 
     completed_ids = {
-        hc.habit_id for hc in HabitCompletion.query.filter_by(date_completed=today).all()
+        hc.habit_id
+        for hc in HabitCompletion.query
+        .join(Habit, Habit.id == HabitCompletion.habit_id)
+        .filter(
+            Habit.user_id == current_user.id,
+            HabitCompletion.date_completed == today
+        )
+        .all()
     }
+
     total = len(habits)
     completed = len([h for h in habits if h.id in completed_ids])
     progress = int((completed / total) * 100) if total > 0 else 0
 
-    return render_template("HabitDashboard_page.html",
+    return render_template(
+        "HabitDashboard_page.html",
         habits=habits,
         completed_ids=completed_ids,
         progress=progress,
@@ -400,29 +435,161 @@ def friend_profile(user_id):
 @main.route("/friends")
 @login_required
 def friends():
-    all_users = User.query.limit(5).all()
-    return render_template("FriendsList_page.html", friends=all_users)
+    friendships = Friendship.query.filter_by(user_id=current_user.id).all()
+
+    friends = []
+    for friendship in friendships:
+        friend = db.session.get(User, friendship.friend_id)
+        if friend:
+            friends.append(friend)
+
+    return render_template("FriendsList_page.html", friends=friends)
+
+@app.route("/friends/search")
+@login_required
+def search_friends():
+    query = request.args.get("q", "").strip()
+
+    if not query:
+        return jsonify([])
+
+    users = (
+        User.query
+        .filter(
+            User.username.ilike(f"%{query}%"),
+            User.id != current_user.id
+        )
+        .limit(10)
+        .all()
+    )
+
+    results = []
+
+    for user in users:
+        already_friend = Friendship.query.filter_by(
+            user_id=current_user.id,
+            friend_id=user.id
+        ).first() is not None
+
+        results.append({
+            "id": user.id,
+            "username": user.username,
+            "profile_image": user.profile_image,
+            "already_friend": already_friend
+        })
+
+    return jsonify(results)
+
+@app.route("/friends/add", methods=["POST"])
+@login_required
+def add_friend():
+    friend_id = request.form.get("friend_id")
+
+    if not friend_id:
+        return jsonify({
+            "success": False,
+            "message": "User not found."
+        }), 400
+
+    try:
+        friend_id = int(friend_id)
+    except ValueError:
+        return jsonify({
+            "success": False,
+            "message": "Invalid user."
+        }), 400
+
+    friend = db.session.get(User, friend_id)
+
+    if not friend:
+        return jsonify({
+            "success": False,
+            "message": "User not found."
+        }), 404
+
+    if friend.id == current_user.id:
+        return jsonify({
+            "success": False,
+            "message": "You cannot add yourself."
+        }), 400
+
+    existing = Friendship.query.filter_by(
+        user_id=current_user.id,
+        friend_id=friend.id
+    ).first()
+
+    if existing:
+        return jsonify({
+            "success": False,
+            "message": "This user is already your friend."
+        }), 409
+
+    friendship = Friendship(
+        user_id=current_user.id,
+        friend_id=friend.id
+    )
+
+    db.session.add(friendship)
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Friend added.",
+        "friend": {
+            "id": friend.id,
+            "username": friend.username,
+            "profile_image": friend.profile_image
+        }
+    })
 
 @main.route("/leaderboard")
 @login_required
 def leaderboard():
     from app.models import get_streak
 
-    users = User.query.all()
+    users = [current_user]
+    friend_activity = []
+
+    friendships = Friendship.query.filter_by(user_id=current_user.id).all()
+
+    for friendship in friendships:
+        friend = db.session.get(User, friendship.friend_id)
+        if friend:
+            users.append(friend)
+
+            recent_completions = (
+                HabitCompletion.query
+                .join(Habit, Habit.id == HabitCompletion.habit_id)
+                .filter(Habit.user_id == friend.id)
+                .order_by(HabitCompletion.date_completed.desc())
+                .limit(3)
+                .all()
+            )
+
+            for completion in recent_completions:
+                habit = db.session.get(Habit, completion.habit_id)
+                if habit:
+                    friend_activity.append({
+                        "username": friend.username,
+                        "habit_name": habit.name,
+                        "date": completion.date_completed
+                    })
 
     leaderboard_data = []
 
-    for u in users:
-        streak = get_streak(u.id)
+    for user in users:
+        streak = get_streak(user.id)
 
         leaderboard_data.append({
-            "username": u.username,
+            "username": user.username,
             "streak": streak
         })
 
     leaderboard_data.sort(key=lambda x: x["streak"], reverse=True)
+    friend_activity.sort(key=lambda x: x["date"], reverse=True)
 
     return render_template(
         "Leaderboard_page.html",
-        leaderboard=leaderboard_data
+        leaderboard=leaderboard_data,
+        friend_activity=friend_activity
     )
