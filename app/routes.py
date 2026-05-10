@@ -445,7 +445,7 @@ def friends():
 
     return render_template("FriendsList_page.html", friends=friends)
 
-@app.route("/friends/search")
+@main.route("/friends/search")
 @login_required
 def search_friends():
     query = request.args.get("q", "").strip()
@@ -480,7 +480,7 @@ def search_friends():
 
     return jsonify(results)
 
-@app.route("/friends/add", methods=["POST"])
+@main.route("/friends/add", methods=["POST"])
 @login_required
 def add_friend():
     friend_id = request.form.get("friend_id")
