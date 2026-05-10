@@ -36,6 +36,14 @@
         />
         <button type="submit">Login</button>
       </form>
+
+      {% if error %}
+      <p class="link-secondary">
+        Forgot your password?
+        <a href="mailto:24263541@student.uwa.edu.au">Contact us to reset it</a>
+      </p>
+      {% endif %}
+
       <p class="link-secondary">
         Don't have an account?
         <a href="{{ url_for('register') }}">Register here</a>
