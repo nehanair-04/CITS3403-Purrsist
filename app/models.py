@@ -34,6 +34,7 @@ class Cat(db.Model):
     name = db.Column(db.String(50), nullable=False)
     rarity = db.Column(db.String(20), nullable=False)
     unlock_condition = db.Column(db.String(100), nullable=False)
+    image_filename = db.Column(db.String(100), nullable=False)
 
 class UserCat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -106,18 +107,18 @@ def check_unlock_condition(user_id, cat):
 # SEED DATA
 def seed_cats():
     cats = [
-        Cat(id=1, name="Luna", rarity="common", unlock_condition="Complete 3 habits"),
-        Cat(id=2, name="Mochi", rarity="common", unlock_condition="Complete 10 habits"),
-        Cat(id=3, name="Coco", rarity="common", unlock_condition="Complete 25 habits"),
-        Cat(id=4, name="Biscuit", rarity="common", unlock_condition="3 day streak"),
-        Cat(id=5, name="Pepper", rarity="common", unlock_condition="7 day streak"),
-        Cat(id=6, name="Milo", rarity="uncommon", unlock_condition="Complete 50 habits"),
-        Cat(id=7, name="Pumpkin", rarity="uncommon", unlock_condition="14 day streak"),
-        Cat(id=8, name="Socks", rarity="uncommon", unlock_condition="Complete 30 habits in a week"),
-        Cat(id=9, name="Astro", rarity="rare", unlock_condition="30 day streak"),
-        Cat(id=10, name="Nova", rarity="rare", unlock_condition="Complete 100 habits"),
-        Cat(id=11, name="Sakura", rarity="rare", unlock_condition="60 day streak"),
-        Cat(id=12, name="Shadow", rarity="rare", unlock_condition="Complete 200 habits"),
+        Cat(id=1, name="Luna", rarity="common", unlock_condition="Complete 3 habits", image_filename="Luna.jpg"),
+        Cat(id=2, name="Mochi", rarity="common", unlock_condition="Complete 10 habits", image_filename="Mochi.jpg"),
+        Cat(id=3, name="Coco", rarity="common", unlock_condition="Complete 25 habits", image_filename="Coco.jpg"),
+        Cat(id=4, name="Biscuit", rarity="common", unlock_condition="3 day streak", image_filename="Biscuit.jpg"),
+        Cat(id=5, name="Snowy", rarity="common", unlock_condition="7 day streak", image_filename="Snowy.jpg"),
+        Cat(id=6, name="Shark", rarity="uncommon", unlock_condition="Complete 50 habits", image_filename="Shark.jpg"),
+        Cat(id=7, name="Bella", rarity="uncommon", unlock_condition="14 day streak", image_filename="Bella.jpg"),
+        Cat(id=8, name="Lucky", rarity="uncommon", unlock_condition="Complete 30 habits in a week", image_filename="Lucky.jpg"),
+        Cat(id=9, name="Astro", rarity="rare", unlock_condition="30 day streak", image_filename="Astro.jpg"),
+        Cat(id=10, name="Nova", rarity="rare", unlock_condition="Complete 100 habits", image_filename="Nova.jpg"),
+        Cat(id=11, name="Sakura", rarity="rare", unlock_condition="60 day streak", image_filename="Sakura.jpg"),
+        Cat(id=12, name="Shadow", rarity="rare", unlock_condition="Complete 200 habits", image_filename="Shadow.jpg"),
     ]
     db.session.add_all(cats)
     db.session.commit()

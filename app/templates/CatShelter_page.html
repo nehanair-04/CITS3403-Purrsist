@@ -26,10 +26,18 @@
         >
           <div class="cat-image-placeholder">
             <img
-              src="{{ url_for('static', filename='images/cat-example.jpg') }}"
+              src="{{ url_for('static', filename='images/' ~ cat.image_filename) }}"
               alt="{{ cat.name }}"
             />
           </div>
+
+          {% if cat.id not in owned_cat_ids %}
+            <div class="cat-unlock-tooltip">
+              <div class="tooltip-cat-name">{{ cat.name }}</div>
+              <div class="tooltip-unlock-text">{{ cat.unlock_hint }}</div>
+            </div>
+          {% endif %}
+          
           <div class="cat-name-tag">{{ cat.name }}</div>
           <div class="rarity-label">{{ cat.rarity | capitalize }}</div>
         </div>

@@ -245,28 +245,78 @@ def delete_habit():
 @login_required
 def shelter():
     from app.models import check_unlock_condition, get_streak
+
     all_cats = Cat.query.all()
     owned_cat_ids = {uc.cat_id for uc in UserCat.query.filter_by(user_id=current_user.id).all()}
+
+    total_completions = (
+        HabitCompletion.query
+        .join(Habit, Habit.id == HabitCompletion.habit_id)
+        .filter(Habit.user_id == current_user.id)
+        .count()
+    )
+
     for cat in all_cats:
         if cat.id not in owned_cat_ids:
             if check_unlock_condition(current_user.id, cat):
                 new_unlock = UserCat(user_id=current_user.id, cat_id=cat.id)
                 db.session.add(new_unlock)
                 owned_cat_ids.add(cat.id)
+
     db.session.commit()
+
     today = str(date.today())
+
     completed_today = HabitCompletion.query.join(Habit).filter(
         Habit.user_id == current_user.id,
         HabitCompletion.date_completed == today
     ).count()
+
     total_habits = Habit.query.filter_by(user_id=current_user.id).count()
     streak = get_streak(current_user.id)
     cats_owned = len(owned_cat_ids)
+
     progress_score = int((completed_today / total_habits) * 50) if total_habits > 0 else 0
     streak_score = min(streak * 3, 30)
     cats_score = min(cats_owned * 5, 20)
     happiness = max(0, min(progress_score + streak_score + cats_score, 100))
-    return render_template("CatShelter_page.html", cats=all_cats, owned_cat_ids=owned_cat_ids, happiness=happiness)
+
+    def get_unlock_hint(cat):
+        condition = cat.unlock_condition
+
+        if condition.startswith("Complete ") and " habits" in condition:
+            required = int(condition.split(" ")[1])
+            remaining = max(required - total_completions, 0)
+
+            if remaining == 0:
+                return "Ready to unlock!"
+            elif remaining == 1:
+                return "Need 1 more habit to unlock"
+            else:
+                return f"Need {remaining} more habits to unlock"
+
+        if "day streak" in condition:
+            required = int(condition.split(" ")[0])
+            remaining = max(required - streak, 0)
+
+            if remaining == 0:
+                return "Ready to unlock!"
+            elif remaining == 1:
+                return "Need 1 more streak day to unlock"
+            else:
+                return f"Need {remaining} more streak days to unlock"
+
+        return condition
+
+    for cat in all_cats:
+        cat.unlock_hint = get_unlock_hint(cat)
+
+    return render_template(
+        "CatShelter_page.html",
+        cats=all_cats,
+        owned_cat_ids=owned_cat_ids,
+        happiness=happiness
+    )
 
 @app.route("/cats", methods=["GET"])
 @login_required
