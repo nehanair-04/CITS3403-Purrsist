@@ -31,10 +31,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   background-color: #fde2d7;
   border: 2px solid #e8d8cc;
-
   padding: 12px 16px;
   margin-bottom: 16px;
 }
@@ -52,7 +50,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-
   text-decoration: none;
   color: #5e4b43;
 }
@@ -85,10 +82,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-
   text-decoration: none;
   color: #5e4b43;
-
   font-size: 8px;
 }
 
@@ -107,7 +102,6 @@ body {
 }
 
 .logout-confirm-btn {
-  width: auto;
   background-color: #c0392b;
   color: white;
   border: 2px solid #942d22;
@@ -124,6 +118,23 @@ body {
 .logout-confirm-btn:hover {
   background-color: #e74c3c;
   text-decoration: none;
+}
+
+#logout-modal .modal {
+  text-align: center;
+}
+
+#logout-modal .modal-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+#logout-modal .cancel-btn,
+#logout-modal .logout-confirm-btn {
+  flex: 1 !important;
+  width: 0 !important;
+  min-width: 0 !important;
 }
 
 /* || BUTTONS */
@@ -184,18 +195,15 @@ button:hover {
 }
 
 /* || MODALS */
+
 .modal-overlay {
   position: fixed;
   inset: 0;
-
   background-color: rgba(232, 216, 204, 0.7);
-
   z-index: 1000;
   display: none;
-
   justify-content: center;
   align-items: center;
-
   padding: 16px;
 }
 
@@ -206,14 +214,11 @@ button:hover {
 .modal {
   background-color: #fff3e8;
   border: 2px solid #e8d8cc;
-
   width: 100%;
   max-width: 600px;
-
   padding: 24px;
   display: flex;
   flex-direction: column;
-
   box-sizing: border-box;
 }
 
@@ -225,10 +230,6 @@ button:hover {
   width: 100%;
   margin-bottom: 12px;
   font-family: inherit;
-}
-
-.modal input {
-  width: 100%;
   box-sizing: border-box;
 }
 
@@ -247,19 +248,33 @@ button:hover {
 
 .modal-buttons {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
   gap: 8px;
   margin-top: 8px;
+}
+
+.modal-buttons .cancel-btn,
+.modal-buttons .add-habit-btn,
+.modal-buttons .delete-btn,
+.modal-buttons .logout-confirm-btn {
+  flex: 1 !important;
+  width: 0 !important;
+  min-width: 0 !important;
 }
 
 .modal-buttons-right {
   display: flex;
   gap: 8px;
+  flex: 2;
+}
+
+.modal-buttons-right .cancel-btn,
+.modal-buttons-right .add-habit-btn {
+  flex: 1 !important;
+  width: 0 !important;
+  min-width: 0 !important;
 }
 
 .add-habit-btn {
-  width: auto;
   background-color: #f7b7a3;
   color: white;
   border: 2px solid #e8d8cc;
@@ -271,7 +286,6 @@ button:hover {
 }
 
 .cancel-btn {
-  width: auto;
   background-color: transparent;
   color: #5e4b43;
   border: 2px solid #e8d8cc;
@@ -280,6 +294,7 @@ button:hover {
 
 .cancel-btn:hover {
   background-color: #f0e0d6;
+  color: #5e4b43;
 }
 
 .modal-header {
@@ -289,8 +304,26 @@ button:hover {
   margin-bottom: 16px;
 }
 
+#edit-habit-modal .modal-buttons {
+  justify-content: space-between;
+  align-items: center;
+}
+
+#edit-habit-modal .modal-buttons-right {
+  display: flex;
+  gap: 8px;
+  flex: unset;
+}
+
+#edit-habit-modal .cancel-btn,
+#edit-habit-modal .add-habit-btn,
+#edit-habit-modal .delete-btn {
+  flex: unset !important;
+  width: auto !important;
+  min-width: auto !important;
+}
+
 .delete-btn {
-  width: auto;
   background-color: #c0392b;
   color: white;
   border: 2px solid #942d22;
@@ -320,19 +353,22 @@ button:hover {
   justify-content: flex-end;
 }
 
-#logout-modal .modal {
-  text-align: center;
-}
-
 /* || LOGIN/REGISTER */
 
 .login-page {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: auto;
-  padding: 0;
+  min-height: 100vh;
+  padding: 16px;
+  box-sizing: border-box;
   margin: 0;
+}
+
+.login-card {
+  max-width: 650px;
+  width: 100%;
+  padding: 32px;
 }
 
 .login-title {
@@ -370,11 +406,10 @@ button:hover {
   min-height: auto;
 }
 
-/* Titles */
-
 .page-title {
   color: #c88ea7;
   margin-bottom: 8px;
+  text-align: center;
 }
 
 .page-subtitle {
@@ -383,15 +418,11 @@ button:hover {
   margin-bottom: 20px;
 }
 
-/* Grid */
-
 .cat-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
-
-/* Cat slot */
 
 .cat-slot {
   padding: 6px;
@@ -399,10 +430,8 @@ button:hover {
   text-align: center;
   background-color: #fffdfb;
   border: 2px solid #d8b49a;
-  max-width: auto;
   margin: 0 auto;
 }
-/* Modifier */
 
 .cat-slot:hover {
   transform: translateY(-3px);
@@ -422,21 +451,17 @@ button:hover {
   opacity: 90%;
 }
 
-/* LOCKED text */
 .cat-slot.empty::before {
   content: "LOCKED";
   position: absolute;
-
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
   font-size: 10px;
   color: #5e4b43;
   background-color: rgba(255, 243, 232, 0.9);
   padding: 6px 8px;
   border: 2px solid #e8d8cc;
-
   z-index: 3;
 }
 
@@ -448,7 +473,13 @@ button:hover {
   box-shadow: 0 0 10px #f6d27b;
 }
 
-/* Image */
+.cat-slot.uncommon {
+  border-color: #c88ea7;
+}
+
+.cat-slot.uncommon:hover {
+  box-shadow: 0 0 10px #c88ea7;
+}
 
 .cat-image-placeholder {
   background-color: #f7eee8;
@@ -464,8 +495,6 @@ button:hover {
   border-radius: 4px;
 }
 
-/* Text */
-
 .cat-name-tag {
   background-color: #f4c6d7;
   color: #5e4b43;
@@ -479,8 +508,6 @@ button:hover {
   color: #8a746a;
   margin-top: 2px;
 }
-
-/* Happiness */
 
 .happiness-section {
   margin-top: 20px;
@@ -504,6 +531,7 @@ button:hover {
   height: 100%;
   width: 60%;
 }
+
 /* || LEADERBOARD PAGE */
 
 .leaderboard-page {
@@ -514,13 +542,11 @@ button:hover {
   min-height: auto;
 }
 
-/* Layout */
 .leaderboard-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
   margin-top: 16px;
-  flex: 1;
 }
 
 .leaderboard-section {
@@ -533,23 +559,18 @@ button:hover {
   min-height: auto;
 }
 
-/* Title (NEW replacement for leaderboard-title) */
 .leaderboard-title {
   font-size: 10px;
   margin-bottom: 12px;
   color: #5e4b43;
 }
 
-/* Entry */
-
 .leaderboard-entry {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   padding: 10px;
   margin-bottom: 8px;
-
   background-color: #fffdfb;
   border: 2px solid #e8d8cc;
 }
@@ -563,8 +584,6 @@ button:hover {
   transition: 0.1s;
 }
 
-/* Top 3 styling */
-
 .first-place {
   background-color: #f6d27b;
 }
@@ -577,8 +596,6 @@ button:hover {
   background-color: #d8b49a;
 }
 
-/* Text */
-
 .friend-name {
   font-size: 10px;
   color: #5e4b43;
@@ -589,15 +606,11 @@ button:hover {
   color: #6b574e;
 }
 
-/* Activity feed */
-
 .activity-feed {
   background-color: #fffdfb;
   border: 2px solid #e8d8cc;
   padding: 12px;
 }
-
-/* Activity items */
 
 .activity-item {
   font-size: 8px;
@@ -616,28 +629,32 @@ button:hover {
   background-color: #fff9f3;
 }
 
-/* Card */
 .profile-card {
-  text-align: left;
-}
+  background-color: #fffdfb;
+  border: 2px solid #e8d8cc;
+  padding: 12px;
+  margin: 16px auto;
+  max-width: 900px;
+  width: 100%;
 
-/* Header */
-
-.page-title {
-  text-align: center;
-  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .profile-header {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+  display: flex;
+  align-items: center;
   gap: 12px;
-  margin-bottom: 16px;
+
+  text-decoration: none;
 }
 
-.avatar {
-  width: 70px;
-  height: 70px;
+.profile-header .avatar {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+
   background-color: #fde2d7;
   border: 2px solid #e8d8cc;
 
@@ -645,16 +662,39 @@ button:hover {
   align-items: center;
   justify-content: center;
 
-  font-size: 20px;
+  font-size: 16px;
+}
+
+.profile-header .avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  gap: 4px;
 }
 
 .profile-name {
   font-size: 10px;
   color: #5e4b43;
-  text-align: left;
 }
 
-/* Stats */
+.upload-btn {
+  width: auto;
+  font-size: 7px;
+  padding: 6px 10px;
+  flex-shrink: 0;
+}
+
+.profile-card:hover {
+  transform: translateY(-2px);
+  transition: 0.1s;
+}
 
 .profile-stats {
   background-color: #fffdfb;
@@ -674,7 +714,6 @@ button:hover {
 .stat-label {
   font-size: 7px;
   color: #8a746a;
-  margin-bottom: 4px;
 }
 
 .stat-value {
@@ -682,13 +721,10 @@ button:hover {
   color: #c88ea7;
 }
 
-/* Streak */
-
 .streak-display {
-  background-color: #fff0c9;
+  background-color: #fffdfb;
   border: 2px solid #e8d8cc;
   padding: 10px;
-  margin: 16px 0;
   text-align: center;
 }
 
@@ -698,33 +734,25 @@ button:hover {
 }
 
 .streak-days::before {
-  content: "🐾  ";
+  content: "🐾 ";
 }
-
-/* History */
 
 .history-section {
   background-color: #fffdfb;
   border: 2px solid #e8d8cc;
   padding: 12px;
-  margin-top: 16px;
 }
 
 .history-title {
   font-size: 10px;
   margin-bottom: 10px;
-  color: #5e4b43;
 }
-
-/* Grid */
 
 .history-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
 }
-
-/* Day squares */
 
 .history-day {
   background-color: #f1e5dc;
@@ -736,17 +764,10 @@ button:hover {
   justify-content: center;
 
   font-size: 6px;
-  color: #8a746a;
 }
 
-.history-day:hover {
-  transform: scale(1.1);
-}
-
-/* Completed day */
 .history-day.completed {
   background-color: #f3c3a3;
-  color: #5e4b43;
 }
 
 .history-day.today {
@@ -757,20 +778,17 @@ button:hover {
 
 .habit-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
 }
 
-.edit-btn {
-  width: auto;
-  padding: 6px 10px;
+.habit-name {
+  font-size: 12px;
+  flex: 1;
 }
-
-/* =========================
-   HABIT TAG SYSTEM
-   ========================= */
 
 .habit-tag {
+  flex-shrink: 0;
   font-size: 10px;
   padding: 4px 10px;
   border-radius: 999px;
@@ -785,87 +803,39 @@ button:hover {
   transform: translateY(-1px);
 }
 
-/* =========================
-     HABIT ROW IMPROVEMENT
-     ========================= */
-
-.habit-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.habit-name {
-  font-size: 12px;
-  flex: 1;
-}
-
-/* || PROFILE PAGE */
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.profile-header {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px;
-  margin-bottom: 16px;
-  align-items: center;
-}
-
-.profile-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  justify-content: center;
-}
-
-.upload-btn {
-  width: auto;
-  font-size: 7px;
+.habit-row .edit-btn {
+  width: auto !important;
   padding: 6px 10px;
-  background-color: #f7b7a3;
-  color: white;
-  border: 2px solid #e8d8cc;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.upload-btn:hover {
-  background-color: #f3a48e;
-}
-
-/* || FRIENDS PROFILE PAGE */
+/* || FRIENDS PAGE */
 
 .friends-page {
   background-color: #fff9f3;
 }
 
-/* Section titles (reuse style feel from page-title) */
 .section-title {
   font-size: 10px;
   color: #5e4b43;
   margin-bottom: 10px;
 }
 
-/* Add friend section */
 .add-friend-section {
   margin-bottom: 20px;
 }
 
-/* Form layout */
-
 .add-friend-form {
   display: flex;
   gap: 8px;
-  align-items: stretch; /* forces same height */
+  align-items: stretch;
 }
 
 .add-friend-form .input-field {
   flex: 1;
   height: 36px;
-  margin-bottom: 0; /* remove default spacing */
+  margin-bottom: 0;
 }
 
 .submit-friend-btn {
@@ -877,49 +847,45 @@ button:hover {
   justify-content: center;
   gap: 8px;
 }
-/* Icon alignment fix */
+
 .submit-friend-btn i {
   font-size: 12px;
   display: flex;
   align-items: center;
 }
 
-/* Friends list */
 .friends-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-/* Each friend row */
 .friend-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-
+  gap: 12px;
   text-decoration: none;
-
   background-color: #fffdfb;
   border: 2px solid #e8d8cc;
-  padding: 8px;
+  padding: 12px;
 }
 
-/* Hover effect (matches your style) */
+.friend-item .avatar {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+}
+
+.friend-item .friend-name {
+  font-size: 10px;
+  color: #5e4b43;
+  flex: 1;
+  text-align: left;
+}
+
 .friend-item:hover {
   transform: translateY(-2px);
   transition: 0.1s;
-}
-
-/* Avatar size (reuses your existing avatar style) */
-.friend-item .avatar {
-  width: 40px;
-  height: 40px;
-}
-
-/* Name */
-.friend-name {
-  font-size: 8px;
-  color: #5e4b43;
 }
 
 /* || HABIT DASHBOARD PAGE */
@@ -949,12 +915,16 @@ button:hover {
 .habit-text {
   font-size: 12px;
   margin: 0;
+  flex: 1;
 }
 
 .complete-btn {
   width: auto;
   padding: 6px 10px;
   font-size: 12px;
+  min-width: 130px;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .progress-section {
@@ -993,8 +963,6 @@ img {
     padding: 10px;
   }
 
-  /* ---------- NAVBAR ---------- */
-
   .navbar {
     flex-direction: column;
     align-items: center;
@@ -1018,16 +986,12 @@ img {
     font-size: 7px;
   }
 
-  /* ---------- CARDS ---------- */
-
   .card {
     width: 100%;
     max-width: 100%;
     padding: 16px;
     margin: 12px auto;
   }
-
-  /* ---------- TEXT ---------- */
 
   .page-title {
     font-size: 16px;
@@ -1036,47 +1000,57 @@ img {
   }
 
   .page-subtitle,
-  .habit-text,
   .progress-label,
-  .friend-name,
-  .friend-streak,
-  .habit-name {
+  .friend-streak {
     font-size: 9px;
     line-height: 1.5;
     word-break: break-word;
   }
 
-  /* ---------- HABIT DASHBOARD ---------- */
-
   .habit-card {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
     gap: 10px;
+  }
+
+  .habit-text {
+    font-size: 9px;
+    flex: 1;
   }
 
   .complete-btn {
-    width: 100%;
+    width: auto !important;
+    min-width: 110px;
+    font-size: 9px;
   }
-
-  /* ---------- HABIT MANAGER ---------- */
 
   .habit-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
   }
 
-  .edit-btn {
-    width: 100%;
+  .habit-name {
+    font-size: 9px;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .habit-tag {
-    font-size: 8px;
-    max-width: 100%;
-    word-break: break-word;
+    font-size: 7px;
+    padding: 3px 6px;
+    flex-shrink: 0;
   }
 
-  /* ---------- MODALS ---------- */
+  .habit-row .edit-btn {
+    width: auto !important;
+    flex-shrink: 0;
+    font-size: 8px;
+    padding: 4px 8px;
+  }
 
   .modal-overlay {
     padding: 12px;
@@ -1090,18 +1064,34 @@ img {
     margin: 0 auto;
   }
 
-  .modal-buttons,
+  .modal-buttons {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .modal-buttons .cancel-btn,
+  .modal-buttons .add-habit-btn,
+  .modal-buttons .delete-btn,
+  .modal-buttons .logout-confirm-btn {
+    flex: 1 !important;
+    width: 0 !important;
+    min-width: 0 !important;
+    font-size: 8px;
+  }
+
   .modal-buttons-right {
-    flex-direction: column;
-    width: 100%;
+    display: flex;
+    gap: 8px;
+    flex: 2;
   }
 
-  .modal-buttons button,
-  .modal-buttons-right button {
-    width: 100%;
+  .modal-buttons-right .cancel-btn,
+  .modal-buttons-right .add-habit-btn {
+    flex: 1 !important;
+    width: 0 !important;
+    min-width: 0 !important;
   }
-
-  /* ---------- CAT GRID ---------- */
 
   .cat-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1112,8 +1102,6 @@ img {
     height: auto;
   }
 
-  /* ---------- LEADERBOARD ---------- */
-
   .leaderboard-layout {
     grid-template-columns: 1fr;
   }
@@ -1123,8 +1111,6 @@ img {
     align-items: flex-start;
     gap: 6px;
   }
-
-  /* ---------- PROFILE ---------- */
 
   .profile-header {
     grid-template-columns: 1fr;
@@ -1154,8 +1140,6 @@ img {
     gap: 4px;
   }
 
-  /* ---------- FRIENDS ---------- */
-
   .add-friend-form {
     flex-direction: column;
   }
@@ -1165,16 +1149,12 @@ img {
   }
 
   .friend-item {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
-
-  /* ---------- BUTTONS ---------- */
 
   button {
     font-size: 10px;
   }
-
-  /* ---------- HISTORY GRID ---------- */
 
   .history-grid {
     grid-template-columns: repeat(4, 1fr);
@@ -1232,5 +1212,16 @@ img {
 
   .modal {
     padding: 12px;
+  }
+
+  #logout-modal .modal-buttons {
+    flex-direction: row;
+  }
+
+  #logout-modal .cancel-btn,
+  #logout-modal .logout-confirm-btn {
+    flex: 1 !important;
+    width: 0 !important;
+    min-width: 0 !important;
   }
 }
