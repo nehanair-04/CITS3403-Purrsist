@@ -1,5 +1,9 @@
 /* || GENERAL STYLES */
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: #fff9f3;
   font-family: "Press Start 2P", monospace;
@@ -35,6 +39,9 @@ body {
   border: 2px solid #e8d8cc;
   padding: 12px 16px;
   margin-bottom: 16px;
+
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .nav-title {
@@ -414,7 +421,7 @@ button:hover {
 
 .page-subtitle {
   color: #8a746a;
-  font-size: 12px;
+  font-size: 14px;
   margin-bottom: 20px;
 }
 
@@ -680,7 +687,7 @@ button:hover {
 }
 
 .profile-name {
-  font-size: 10px;
+  font-size: 14px;
   color: #5e4b43;
 }
 
@@ -703,7 +710,7 @@ button:hover {
 
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .stat-item {
@@ -712,12 +719,12 @@ button:hover {
 }
 
 .stat-label {
-  font-size: 7px;
+  font-size: 10px;
   color: #8a746a;
 }
 
 .stat-value {
-  font-size: 10px;
+  font-size: 12px;
   color: #c88ea7;
 }
 
@@ -744,36 +751,43 @@ button:hover {
 }
 
 .history-title {
-  font-size: 10px;
+  font-size: 14px;
   margin-bottom: 10px;
 }
 
-.history-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
+/* History list */
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-.history-day {
+.history-row {
   background-color: #f1e5dc;
   border-radius: 4px;
-  height: 20px;
+  padding: 12px 16px;
+  border: 2px solid #e8d8cc;
 
   display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 6px;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.history-day.completed {
-  background-color: #f3c3a3;
+.history-date-line {
+  font-size: 8px;
+  color: #5e4b43;
+  line-height: 1.4;
 }
 
-.history-day.today {
-  border: 2px solid #c88ea7;
+.history-completed-line {
+  font-size: 8px;
+  color: #c88ea7;
+  line-height: 1.4;
 }
-
 /* || HABIT MANAGER PAGE */
 
 .habit-row {
@@ -876,6 +890,7 @@ button:hover {
   flex-shrink: 0;
 }
 
+/* Name */
 .friend-item .friend-name {
   font-size: 10px;
   color: #5e4b43;
@@ -966,8 +981,11 @@ img {
   .navbar {
     flex-direction: column;
     align-items: center;
-    gap: 14px;
-    text-align: center;
+    gap: 10px;
+
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto 16px auto;
   }
 
   .nav-links {
@@ -1091,6 +1109,9 @@ img {
     flex: 1 !important;
     width: 0 !important;
     min-width: 0 !important;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
   }
 
   .cat-grid {

@@ -80,52 +80,63 @@
         <span class="streak-days">{{ stats.current_streak }} days</span>
       </div>
 
-      <div class="habit-summary-section">
+      <div class="history-section">
         <h2 class="history-title">Habit Summary</h2>
 
-        <div class="summary-list">
-          {% for habit in habit_summary %}
-          <div class="summary-item">
-            <span class="habit-name">{{ habit.name }}</span>
-            <span class="habit-progress"
-              >Completed {{ habit.completed_times }} times</span
-            >
+        {% if habit_summary %}
+          <div class="profile-stats">
+            {% for habit in habit_summary %}
+              <div class="stat-item">
+                <span class="stat-label">{{ habit.name }}</span>
+                <span class="stat-value">
+                  Completed {{ habit.completed_times }} times
+                </span>
+              </div>
+            {% endfor %}
           </div>
-          {% endfor %}
-        </div>
+        {% else %}
+          <p class="stat-label">No habit summary available yet.</p>
+        {% endif %}
       </div>
 
-      <!-- Other users can see the cat collection summary -->
-      <div class="cat-summary-section">
+      <!-- CAT COLLECTION SUMMARY -->
+      <div class="history-section">
         <h2 class="history-title">Cat Collection Summary</h2>
 
-        <p class="profile-note">
-          Other users can see the number of cats collected and a preview of the
-          user's cat collection.
-        </p>
-
-        <div class="summary-list">
-          {% for cat in cat_collection %}
-          <div class="summary-item">
-            <span class="habit-name">{{ cat.name }}</span>
-            <span class="habit-progress">{{ cat.rarity }}</span>
+        {% if cat_collection %}
+          <div class="profile-stats">
+            {% for cat in cat_collection %}
+              <div class="stat-item">
+                <span class="stat-label">{{ cat.name }}</span>
+                <span class="stat-value">{{ cat.rarity }}</span>
+              </div>
+            {% endfor %}
           </div>
-          {% endfor %}
-        </div>
+        {% else %}
+          <p class="stat-label">No cats collected yet.</p>
+        {% endif %}
       </div>
 
       <div class="history-section">
         <h2 class="history-title">History</h2>
 
-        <div class="history-grid">
-          <div class="history-day">Day1</div>
-          <div class="history-day">Day2</div>
-          <div class="history-day">Day3</div>
-          <div class="history-day">Day4</div>
-          <div class="history-day">Day5</div>
-          <div class="history-day">Day6</div>
-          <div class="history-day">Day7</div>
-        </div>
+        {% if history %}
+          <div class="history-list">
+            {% for day in history %}
+              <div class="history-row">
+                <div class="history-date-line">
+                  {{ day.date }} {{ day.day_name }}
+                </div>
+
+                <div class="history-completed-line">
+                  {{ day.completed_count }} completed
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="stat-label">No history available yet.</p>
+        {% endif %}
       </div>
     </div>
   </body>
