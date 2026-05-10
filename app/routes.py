@@ -511,15 +511,22 @@ def add_friend():
 def leaderboard():
     from app.models import get_streak
 
-    users = User.query.all()
+    users = [current_user]
+
+    friendships = Friendship.query.filter_by(user_id=current_user.id).all()
+
+    for friendship in friendships:
+        friend = db.session.get(User, friendship.friend_id)
+        if friend:
+            users.append(friend)
 
     leaderboard_data = []
 
-    for u in users:
-        streak = get_streak(u.id)
+    for user in users:
+        streak = get_streak(user.id)
 
         leaderboard_data.append({
-            "username": u.username,
+            "username": user.username,
             "streak": streak
         })
 
