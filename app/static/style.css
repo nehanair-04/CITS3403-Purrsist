@@ -456,6 +456,7 @@ button:hover {
   inset: 0;
   background-color: #d8b49a;
   opacity: 90%;
+  z-index: 1;
 }
 
 .cat-slot.empty::before {
@@ -470,6 +471,44 @@ button:hover {
   padding: 6px 8px;
   border: 2px solid #e8d8cc;
   z-index: 3;
+}
+
+.cat-unlock-tooltip {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+
+  background-color: rgba(255, 243, 232, 0.95);
+  border-radius: 8px;
+  border: 2px solid #e8d8cc;
+
+  padding: 12px;
+  text-align: center;
+
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.cat-slot.empty:hover .cat-unlock-tooltip {
+  display: flex;
+}
+
+.cat-slot.empty:hover::before {
+  display: none;
+}
+
+.tooltip-cat-name {
+  font-size: 10px;
+  color: #5e4b43;
+}
+
+.tooltip-unlock-text {
+  font-size: 7px;
+  color: #8a746a;
+  line-height: 1.6;
 }
 
 .cat-slot.rare {
