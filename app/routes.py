@@ -2,16 +2,17 @@ import os
 from flask import render_template, request, redirect, url_for, current_app, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
-from app import app, db
+from app import db
+from app.blueprints import main
 from app.models import User, Habit, HabitCompletion, Cat, UserCat, Friendship
 from datetime import date, timedelta
 from sqlalchemy import func
 
-@app.route("/")
+@main.route("/")
 def index():
-    return redirect(url_for("login"))
+    return redirect(url_for("main.login"))
 
-@app.route("/login", methods=["GET", "POST"])
+@main.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
@@ -19,11 +20,11 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
-            return redirect(url_for("dashboard"))
+            return redirect(url_for("main.dashboard"))
         return render_template("loginpage.html", error="Invalid username or password")
     return render_template("loginpage.html")
 
-@app.route("/register", methods=["GET", "POST"])
+@main.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         username = request.form.get("username")
@@ -35,14 +36,14 @@ def register():
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for("login"))
+        return redirect(url_for("main.login"))
     return render_template("registerpage.html")
 
-@app.route("/logout")
+@main.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("login"))
+    return redirect(url_for("main.login"))
 
 # Allowed image types for profile picture upload
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
@@ -69,7 +70,7 @@ DAYS_TO_FREQUENCY = {
     60: "bimonthly",
 }
 
-@app.route("/dashboard")
+@main.route("/dashboard")
 @login_required
 def dashboard():
     today_date = date.today()
@@ -126,7 +127,7 @@ def dashboard():
         total=total
     )
 
-@app.route("/habits/<int:habit_id>/complete", methods=["POST"])
+@main.route("/habits/<int:habit_id>/complete", methods=["POST"])
 @login_required
 def complete_habit(habit_id):
     from app.models import check_unlock_condition, get_streak
@@ -154,13 +155,13 @@ def complete_habit(habit_id):
 
     return {"success": True, "new_cats": new_cats}, 200
 
-@app.route("/habits")
+@main.route("/habits")
 @login_required
 def habits():
     habits = Habit.query.filter_by(user_id=current_user.id).all()
     return render_template("habitmanagerpage.html", habits=habits)
 
-@app.route("/habits/create", methods=["POST"])
+@main.route("/habits/create", methods=["POST"])
 @login_required
 def create_habit():
     name = " ".join(request.form.get("name", "").strip().lower().split())
@@ -210,7 +211,7 @@ def create_habit():
     db.session.commit()
     return {"success": True, "name": habit.name, "frequency": habit.frequency, "frequency_days": habit.frequency_days}, 200
 
-@app.route("/habits/update", methods=["POST"])
+@main.route("/habits/update", methods=["POST"])
 @login_required
 def update_habit():
     name = " ".join(request.form.get("name", "").strip().lower().split())
@@ -231,7 +232,7 @@ def update_habit():
     db.session.commit()
     return {"success": True, "updated": True, "name": habit.name, "frequency": habit.frequency, "frequency_days": habit.frequency_days}, 200
 
-@app.route("/habits/delete", methods=["POST"])
+@main.route("/habits/delete", methods=["POST"])
 @login_required
 def delete_habit():
     name = request.form.get("name", "").strip().lower()
@@ -241,7 +242,7 @@ def delete_habit():
         db.session.commit()
     return {"success": True}, 200
 
-@app.route("/shelter")
+@main.route("/shelter")
 @login_required
 def shelter():
     from app.models import check_unlock_condition, get_streak
@@ -318,7 +319,7 @@ def shelter():
         happiness=happiness
     )
 
-@app.route("/cats", methods=["GET"])
+@main.route("/cats", methods=["GET"])
 @login_required
 def get_cats():
     user_cats = UserCat.query.filter_by(user_id=current_user.id).all()
@@ -336,7 +337,7 @@ def get_cats():
 
     return jsonify(cats)
 
-@app.route("/profile")
+@main.route("/profile")
 @login_required
 def profile():
     from app.models import get_streak
@@ -407,16 +408,16 @@ def profile():
     )
 
 
-@app.route("/profile/upload-picture", methods=["POST"])
+@main.route("/profile/upload-picture", methods=["POST"])
 @login_required
 def upload_profile_picture():
     if "profile_picture" not in request.files:
-        return redirect(url_for("profile"))
+        return redirect(url_for("main.profile"))
 
     file = request.files["profile_picture"]
 
     if file.filename == "":
-        return redirect(url_for("profile"))
+        return redirect(url_for("main.profile"))
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -431,9 +432,9 @@ def upload_profile_picture():
         current_user.profile_image = f"uploads/profile_pictures/{filename}"
         db.session.commit()
 
-    return redirect(url_for("profile"))
+    return redirect(url_for("main.profile"))
 
-@app.route("/profile/<int:user_id>")
+@main.route("/profile/<int:user_id>")
 @login_required
 def friend_profile(user_id):
     from app.models import get_streak
@@ -481,7 +482,7 @@ def friend_profile(user_id):
         stats=stats
     )
 
-@app.route("/friends")
+@main.route("/friends")
 @login_required
 def friends():
     friendships = Friendship.query.filter_by(user_id=current_user.id).all()
@@ -494,7 +495,7 @@ def friends():
 
     return render_template("FriendsList_page.html", friends=friends)
 
-@app.route("/friends/search")
+@main.route("/friends/search")
 @login_required
 def search_friends():
     query = request.args.get("q", "").strip()
@@ -529,7 +530,7 @@ def search_friends():
 
     return jsonify(results)
 
-@app.route("/friends/add", methods=["POST"])
+@main.route("/friends/add", methods=["POST"])
 @login_required
 def add_friend():
     friend_id = request.form.get("friend_id")
@@ -591,7 +592,7 @@ def add_friend():
         }
     })
 
-@app.route("/leaderboard")
+@main.route("/leaderboard")
 @login_required
 def leaderboard():
     from app.models import get_streak

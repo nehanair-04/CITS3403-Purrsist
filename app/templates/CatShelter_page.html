@@ -32,12 +32,12 @@
           </div>
 
           {% if cat.id not in owned_cat_ids %}
-            <div class="cat-unlock-tooltip">
-              <div class="tooltip-cat-name">{{ cat.name }}</div>
-              <div class="tooltip-unlock-text">{{ cat.unlock_hint }}</div>
-            </div>
+          <div class="cat-unlock-tooltip">
+            <div class="tooltip-cat-name">{{ cat.name }}</div>
+            <div class="tooltip-unlock-text">{{ cat.unlock_hint }}</div>
+          </div>
           {% endif %}
-          
+
           <div class="cat-name-tag">{{ cat.name }}</div>
           <div class="rarity-label">{{ cat.rarity | capitalize }}</div>
         </div>
@@ -53,7 +53,8 @@
         </div>
         <p class="page-subtitle">{{ happiness }}%</p>
         <p class="page-subtitle">
-          Cat Happiness is calculated from today's habit progress, current streak, and cats collected.
+          Cat Happiness is calculated from today's habit progress, current
+          streak, and cats collected.
         </p>
       </div>
     </div>

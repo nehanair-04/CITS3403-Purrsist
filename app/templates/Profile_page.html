@@ -33,7 +33,7 @@
         <div class="profile-info">
           <p class="profile-name">{{ user.username }}</p>
           <form
-            action="{{ url_for('upload_profile_picture') }}"
+            action="{{ url_for('main.upload_profile_picture') }}"
             method="POST"
             enctype="multipart/form-data"
           >
@@ -84,18 +84,18 @@
         <h2 class="history-title">Habit Summary</h2>
 
         {% if habit_summary %}
-          <div class="profile-stats">
-            {% for habit in habit_summary %}
-              <div class="stat-item">
-                <span class="stat-label">{{ habit.name }}</span>
-                <span class="stat-value">
-                  Completed {{ habit.completed_times }} times
-                </span>
-              </div>
-            {% endfor %}
+        <div class="profile-stats">
+          {% for habit in habit_summary %}
+          <div class="stat-item">
+            <span class="stat-label">{{ habit.name }}</span>
+            <span class="stat-value">
+              Completed {{ habit.completed_times }} times
+            </span>
           </div>
+          {% endfor %}
+        </div>
         {% else %}
-          <p class="stat-label">No habit summary available yet.</p>
+        <p class="stat-label">No habit summary available yet.</p>
         {% endif %}
       </div>
 
@@ -104,16 +104,16 @@
         <h2 class="history-title">Cat Collection Summary</h2>
 
         {% if cat_collection %}
-          <div class="profile-stats">
-            {% for cat in cat_collection %}
-              <div class="stat-item">
-                <span class="stat-label">{{ cat.name }}</span>
-                <span class="stat-value">{{ cat.rarity }}</span>
-              </div>
-            {% endfor %}
+        <div class="profile-stats">
+          {% for cat in cat_collection %}
+          <div class="stat-item">
+            <span class="stat-label">{{ cat.name }}</span>
+            <span class="stat-value">{{ cat.rarity }}</span>
           </div>
+          {% endfor %}
+        </div>
         {% else %}
-          <p class="stat-label">No cats collected yet.</p>
+        <p class="stat-label">No cats collected yet.</p>
         {% endif %}
       </div>
 
@@ -121,21 +121,21 @@
         <h2 class="history-title">History</h2>
 
         {% if history %}
-          <div class="history-list">
-            {% for day in history %}
-              <div class="history-row">
-                <div class="history-date-line">
-                  {{ day.date }} {{ day.day_name }}
-                </div>
+        <div class="history-list">
+          {% for day in history %}
+          <div class="history-row">
+            <div class="history-date-line">
+              {{ day.date }} {{ day.day_name }}
+            </div>
 
-                <div class="history-completed-line">
-                  {{ day.completed_count }} completed
-                </div>
-              </div>
-            {% endfor %}
+            <div class="history-completed-line">
+              {{ day.completed_count }} completed
+            </div>
           </div>
+          {% endfor %}
+        </div>
         {% else %}
-          <p class="stat-label">No history available yet.</p>
+        <p class="stat-label">No history available yet.</p>
         {% endif %}
       </div>
     </div>

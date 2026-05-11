@@ -34,7 +34,7 @@
           class="input-field"
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit" id="login-btn">Login</button>
       </form>
 
       {% if error %}
@@ -46,7 +46,7 @@
 
       <p class="link-secondary">
         Don't have an account?
-        <a href="{{ url_for('register') }}">Register here</a>
+        <a href="{{ url_for('main.register') }}">Register here</a>
       </p>
     </div>
   </body>
