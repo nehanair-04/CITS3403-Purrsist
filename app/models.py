@@ -106,6 +106,10 @@ def check_unlock_condition(user_id, cat):
 
 # SEED DATA
 def seed_cats():
+    """Add the default cats if the Cat table is empty."""
+    if Cat.query.count() > 0:
+        return
+    
     cats = [
         Cat(id=1, name="Luna", rarity="common", unlock_condition="Complete 3 habits", image_filename="Luna.jpg"),
         Cat(id=2, name="Mochi", rarity="common", unlock_condition="Complete 10 habits", image_filename="Mochi.jpg"),
