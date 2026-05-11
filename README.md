@@ -37,57 +37,113 @@ The app uses a pixel art aesthetic with a soft pink and cream colour palette. Ke
 1. Clone the repository:
 
 ```bash
-   git clone https://github.com/nehanair-04/CITS3403-Group-Project.git
-   cd CITS3403-Group-Project
+git clone https://github.com/nehanair-04/CITS3403-Group-Project.git
+cd CITS3403-Group-Project
 ```
 
 2. Create and activate a virtual environment:
 
 ```bash
-   python -m venv .venv
-   source .venv/bin/activate
+python -m venv .venv
+```
+
+macOS/Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+Windows PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+Windows Command Prompt:
+
+```cmd
+.venv\Scripts\activate.bat
 ```
 
 3. Install dependencies:
 
 ```bash
-   pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 4. Set the secret key environment variable:
 
+macOS/Linux:
+
 ```bash
-   export PURRSIST_SECRET_KEY='your-secret-key-here'
+export PURRSIST_SECRET_KEY='your-secret-key-here'
+```
+
+Windows PowerShell:
+
+```powershell
+$env:PURRSIST_SECRET_KEY="your-secret-key-here"
+```
+
+Windows Command Prompt:
+
+```cmd
+set PURRSIST_SECRET_KEY=your-secret-key-here
 ```
 
 5. Set up the database:
 
+First, set the Flask app environment variable:
+
+macOS/Linux:
+
 ```bash
-   flask db upgrade
+export FLASK_APP=purrsistapp.py
+```
+
+Windows PowerShell:
+
+```powershell
+$env:FLASK_APP="purrsistapp.py"
+```
+
+Windows Command Prompt:
+
+```cmd
+set FLASK_APP=purrsistapp.py
+```
+
+Then run the database migration:
+
+```bash
+flask db upgrade
 ```
 
 6. Seed the cat data:
 
+Cat data is automatically seeded when the app starts if no cats exist in the database. If cats are not already seeded, you can manually seed them by running:
+
 ```bash
-   flask shell
-   >>> from app.models import seed_cats
-   >>> seed_cats()
-   >>> exit()
+flask shell
+>>> from app.models import seed_cats
+>>> seed_cats()
+>>> exit()
 ```
 
 7. Run the application:
 
 ```bash
-   flask run
+flask run
 ```
 
 8. Open your browser and navigate to `http://127.0.0.1:5000`
 
 ## How to Run Tests
 
-This project uses Python’s built-in unittest framework for both unit testing and Selenium testing.
+This project uses Python's built-in unittest framework for both unit testing and Selenium testing.
 
 1. Install test dependencies
+
    Make sure your virtual environment is activated, then install dependencies:
 
 ```bash
@@ -95,6 +151,7 @@ pip install -r requirements.txt
 ```
 
 2. Run unit tests
+
    To run all unit tests:
 
 ```bash
@@ -102,6 +159,7 @@ python -m unittest tests.unittests -v
 ```
 
 3. Run Selenium tests
+
    Selenium tests simulate real user interactions with the web application using a headless Chrome browser.
    Run them with:
 
@@ -109,4 +167,4 @@ python -m unittest tests.unittests -v
 python -m unittest tests.seleniumtests -v
 ```
 
-This project also includes automate tests with GitHub workflows.
+This project also includes automated tests with GitHub workflows.
