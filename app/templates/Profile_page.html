@@ -22,59 +22,60 @@
     <div class="card profile-card">
       <h1 class="page-title">My Profile</h1>
 
-      <div class="profile-header">
-        <div class="avatar">
-          <img
-            src="{{ url_for('static', filename=user.profile_image or 'images/default-profile.jpg') }}"
-            alt="Profile picture"
-            class="profile-avatar"
-          />
-        </div>
-        <div class="profile-info">
-          <p class="profile-name">{{ user.username }}</p>
-          <form
-            action="{{ url_for('main.upload_profile_picture') }}"
-            method="POST"
-            enctype="multipart/form-data"
-          >
-            <input
-              type="file"
-              id="profile-picture-input"
-              name="profile_picture"
-              accept="image/png, image/jpeg, image/jpg"
-              required
-              hidden
-              onchange="this.form.submit()"
+      <div class="profile-top">
+        <div class="profile-header">
+          <div class="avatar">
+            <img
+              src="{{ url_for('static', filename=user.profile_image or 'images/default-profile.jpg') }}"
+              alt="Profile picture"
+              class="profile-avatar"
             />
-            <button
-              type="button"
-              class="upload-btn"
-              onclick="document.getElementById('profile-picture-input').click()"
+          </div>
+          <div class="profile-info">
+            <p class="profile-name">{{ user.username }}</p>
+            <form
+              action="{{ url_for('main.upload_profile_picture') }}"
+              method="POST"
+              enctype="multipart/form-data"
             >
-              Upload Picture
-            </button>
-          </form>
+              <input
+                type="file"
+                id="profile-picture-input"
+                name="profile_picture"
+                accept="image/png, image/jpeg, image/jpg"
+                required
+                hidden
+                onchange="this.form.submit()"
+              />
+              <button
+                type="button"
+                class="upload-btn"
+                onclick="document.getElementById('profile-picture-input').click()"
+              >
+                Upload Picture
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="profile-stats">
+          <div class="stat-item">
+            <p class="stat-label">Habits Completed</p>
+            <p class="stat-value">{{ stats.habits_completed }}</p>
+          </div>
+
+          <div class="stat-item">
+            <p class="stat-label">Longest Streak</p>
+            <p class="stat-value">{{ stats.longest_streak }} days</p>
+          </div>
+
+          <div class="stat-item">
+            <p class="stat-label">Cats Collected</p>
+            <p class="stat-value">{{ stats.cats_collected }}</p>
+          </div>
         </div>
       </div>
-
-      <!-- STATS -->
-      <div class="profile-stats">
-        <div class="stat-item">
-          <p class="stat-label">Habits Completed</p>
-          <p class="stat-value">{{ stats.habits_completed }}</p>
-        </div>
-
-        <div class="stat-item">
-          <p class="stat-label">Longest Streak</p>
-          <p class="stat-value">{{ stats.longest_streak }} days</p>
-        </div>
-
-        <div class="stat-item">
-          <p class="stat-label">Cats Collected</p>
-          <p class="stat-value">{{ stats.cats_collected }}</p>
-        </div>
-      </div>
-
       <div class="streak-display">
         <p class="stat-label">Current Streak</p>
         <span class="streak-days">{{ stats.current_streak }} days</span>

@@ -695,26 +695,36 @@ button:hover {
   gap: 12px;
 }
 
+.profile-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+}
+
 .profile-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  text-align: center;
+  flex-shrink: 0;
+  width: 160px;
+}
 
-  text-decoration: none;
+.profile-top .profile-stats {
+  flex: 1;
 }
 
 .profile-header .avatar {
-  width: 50px;
-  height: 50px;
+  width: 100px;
+  height: 100px;
   flex-shrink: 0;
-
   background-color: #fde2d7;
   border: 2px solid #e8d8cc;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   font-size: 16px;
 }
 
@@ -727,21 +737,20 @@ button:hover {
 .profile-info {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  flex: 1;
-  gap: 4px;
+  align-items: center;
+  gap: 6px;
 }
 
 .profile-name {
   font-size: 14px;
   color: #5e4b43;
+  margin: 0;
 }
 
 .upload-btn {
   width: auto;
   font-size: 7px;
   padding: 6px 10px;
-  flex-shrink: 0;
 }
 
 .profile-card:hover {
@@ -1210,10 +1219,13 @@ img {
     align-items: flex-start;
     gap: 6px;
   }
-
+  .profile-top {
+    flex-direction: column;
+    align-items: center;
+  }
   .profile-header {
-    grid-template-columns: 1fr;
-    justify-items: center;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
   }
 
@@ -1227,7 +1239,7 @@ img {
   }
 
   .profile-name {
-    text-align: center;
+    text-align: left;
   }
 
   .profile-stats {

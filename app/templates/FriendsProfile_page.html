@@ -19,31 +19,32 @@
 
     <div class="card profile-card">
       <h1 class="page-title">{{ user.username }}'s Profile</h1>
-      <div class="profile-header">
-        <div class="avatar">
-          <img
-            src="{{ url_for('static', filename=user.profile_image or 'images/default-profile.jpg') }}"
-            alt="{{ user.username }} profile picture"
-          />
+      <div class="profile-top">
+        <div class="profile-header">
+          <div class="avatar">
+            <img
+              src="{{ url_for('static', filename=user.profile_image or 'images/default-profile.jpg') }}"
+              alt="{{ user.username }} profile picture"
+            />
+          </div>
+          <p class="profile-name">{{ user.username }}</p>
         </div>
-        <p class="profile-name">{{ user.username }}</p>
-      </div>
 
-      <div class="profile-stats">
-        <div class="stat-item">
-          <p class="stat-label">Habits Completed</p>
-          <p class="stat-value">{{ stats.habits_completed }}</p>
-        </div>
-        <div class="stat-item">
-          <p class="stat-label">Longest Streak</p>
-          <p class="stat-value">{{ stats.longest_streak }} days</p>
-        </div>
-        <div class="stat-item">
-          <p class="stat-label">Cats Collected</p>
-          <p class="stat-value">{{ stats.cats_collected }}</p>
+        <div class="profile-stats">
+          <div class="stat-item">
+            <p class="stat-label">Habits Completed</p>
+            <p class="stat-value">{{ stats.habits_completed }}</p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label">Longest Streak</p>
+            <p class="stat-value">{{ stats.longest_streak }} days</p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-label">Cats Collected</p>
+            <p class="stat-value">{{ stats.cats_collected }}</p>
+          </div>
         </div>
       </div>
-
       <div class="streak-display">
         <p class="stat-label">Current Streak</p>
         <span class="streak-days">{{ stats.current_streak }} days</span>
@@ -53,16 +54,18 @@
         <h2 class="history-title">Habit Summary</h2>
 
         {% if habit_summary %}
-          <div class="profile-stats">
-            {% for habit in habit_summary %}
-              <div class="stat-item">
-                <span class="stat-label">{{ habit.name }}</span>
-                <span class="stat-value">Completed {{ habit.completed_times }} times</span>
-              </div>
-            {% endfor %}
+        <div class="profile-stats">
+          {% for habit in habit_summary %}
+          <div class="stat-item">
+            <span class="stat-label">{{ habit.name }}</span>
+            <span class="stat-value"
+              >Completed {{ habit.completed_times }} times</span
+            >
           </div>
+          {% endfor %}
+        </div>
         {% else %}
-          <p class="stat-label">No habit summary available yet.</p>
+        <p class="stat-label">No habit summary available yet.</p>
         {% endif %}
       </div>
 
@@ -70,16 +73,16 @@
         <h2 class="history-title">Cat Collection Summary</h2>
 
         {% if cat_collection %}
-          <div class="profile-stats">
-            {% for cat in cat_collection %}
-              <div class="stat-item">
-                <span class="stat-label">{{ cat.name }}</span>
-                <span class="stat-value">{{ cat.rarity }}</span>
-              </div>
-            {% endfor %}
+        <div class="profile-stats">
+          {% for cat in cat_collection %}
+          <div class="stat-item">
+            <span class="stat-label">{{ cat.name }}</span>
+            <span class="stat-value">{{ cat.rarity }}</span>
           </div>
+          {% endfor %}
+        </div>
         {% else %}
-          <p class="stat-label">No cats collected yet.</p>
+        <p class="stat-label">No cats collected yet.</p>
         {% endif %}
       </div>
     </div>
