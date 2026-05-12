@@ -7,6 +7,8 @@ from app.blueprints import main
 from app.models import User, Habit, HabitCompletion, Cat, UserCat, Friendship
 from datetime import date, timedelta
 from sqlalchemy import func
+from app.forms import RegisterForm
+
 
 @main.route("/")
 def index():
@@ -26,18 +28,20 @@ def login():
 
 @main.route("/register", methods=["GET", "POST"])
 def register():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+    form = RegisterForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
         if User.query.filter_by(username=username).first():
-            return render_template("registerpage.html", error="Username already taken")
+            form.username.errors.append('Username already taken.')
+            return render_template("registerpage.html", form=form)
         user = User()
         user.username = username
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
         return redirect(url_for("main.login"))
-    return render_template("registerpage.html")
+    return render_template("registerpage.html", form=form)
 
 @main.route("/logout")
 @login_required
