@@ -80,7 +80,7 @@ class SeleniumTests(unittest.TestCase):
 
         self.assertIn("dashboard", self.driver.current_url)
 
-     def _login(self, username="test", password="1234"):
+    def _login(self, username="test", password="1234"):
         self.driver.get(LOCAL_HOST + "login")
         self.driver.find_element(By.NAME, "username").send_keys(username)
         self.driver.find_element(By.NAME, "password").send_keys(password)
@@ -138,6 +138,12 @@ class SeleniumTests(unittest.TestCase):
     def test_logout_redirects_to_login(self):
         self._login()
         self.driver.get(LOCAL_HOST + "logout")
+        time.sleep(1)
+        self.assertIn("login", self.driver.current_url)
+
+    # Checks that a logged-out user trying to access a protected page is redirected to login
+    def test_logged_out_redirected_to_login(self):
+        self.driver.get(LOCAL_HOST + "dashboard")
         time.sleep(1)
         self.assertIn("login", self.driver.current_url)
 
