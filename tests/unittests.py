@@ -29,6 +29,15 @@ class UserModelCase(unittest.TestCase):
         db.session.commit()
         return habit
 
+    # checks password hashing works correctly
+    def test_password_hashing(self):
+        user = User(username="test")
+
+        user.set_password("bubbles")
+
+        self.assertTrue(user.check_password("bubbles"))
+        self.assertFalse(user.check_password("wrong"))
+
     # correct password returns True
     def test_password_hashing_correct(self):
         user = self._create_user()
