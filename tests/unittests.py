@@ -2,7 +2,7 @@ import unittest
 from app import create_app, db
 from app.config import TestConfig
 from app.models import User, Habit, HabitCompletion, Cat, UserCat, Friendship, seed_cats, get_streak, check_unlock_condition
-from datetime import date
+from datetime import date, timedelta
 
 class UserModelCase(unittest.TestCase):
     def setUp(self):
@@ -143,3 +143,285 @@ class UserModelCase(unittest.TestCase):
         db.session.commit()
         found = Friendship.query.filter_by(user_id=user1.id, friend_id=user2.id).first()
         self.assertIsNotNone(found)
+
+    # special characters in username are rejected
+    def test_register_special_characters_username(self):
+        with self.app.test_client() as client:
+            response = client.post(
+                "/register",
+                data={
+                    "username": "bad!user@name",
+                    "password": "password123",
+                    "confirm_password": "password123",
+                },
+                follow_redirects=True,
+            )
+
+            found = User.query.filter_by(username="bad!user@name").first()
+            self.assertIsNone(found)
+            self.assertEqual(response.status_code, 200)
+
+    # valid login redirects to dashboard
+    def test_login_valid_credentials(self):
+        self._create_user(username="loginuser", password="password123")
+
+        with self.app.test_client() as client:
+            response = client.post(
+                "/login",
+                data={"username": "loginuser", "password": "password123"},
+                follow_redirects=False,
+            )
+
+            self.assertEqual(response.status_code, 302)
+            self.assertIn("dashboard", response.headers.get("Location", ""))
+
+    # invalid login stays on login page
+    def test_login_invalid_credentials(self):
+        self._create_user(username="loginuser", password="password123")
+
+        with self.app.test_client() as client:
+            response = client.post(
+                "/login",
+                data={"username": "loginuser", "password": "wrongpassword"},
+                follow_redirects=True,
+            )
+
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b"Invalid", response.data)
+
+    # protected routes redirect logged-out users to login
+    def test_protected_routes_redirect_logged_out_user(self):
+        with self.app.test_client() as client:
+            response = client.get("/dashboard", follow_redirects=False)
+
+            self.assertEqual(response.status_code, 302)
+            self.assertIn("login", response.headers.get("Location", ""))
+
+    # custom habit frequency requires a valid number of days
+    def test_custom_habit_frequency_requires_valid_days(self):
+        self._create_user()
+
+        with self.app.test_client() as client:
+            client.post(
+                "/login",
+                data={"username": "testuser", "password": "password123"},
+            )
+
+            response = client.post(
+                "/habits/create",
+                data={
+                    "name": "custom habit",
+                    "frequency": "custom",
+                    "custom_days": "0",
+                },
+            )
+
+            self.assertIn(response.status_code, [400, 422])
+
+    # editing a habit frequency updates the habit correctly
+    def test_edit_habit_frequency(self):
+        user = self._create_user()
+        habit = self._create_habit(user, name="study", frequency="daily")
+
+        with self.app.test_client() as client:
+            client.post(
+                "/login",
+                data={"username": "testuser", "password": "password123"},
+            )
+
+            response = client.post(
+                "/habits/update",
+                data={
+                    "name": "study",
+                    "frequency": "weekly",
+                    "custom_days": "",
+                },
+            )
+
+            self.assertEqual(response.status_code, 200)
+
+        db.session.refresh(habit)
+        self.assertEqual(habit.frequency, "weekly")
+
+    # profile stats update correctly after completing habits
+    def test_progress_stats_update_after_completing_habits(self):
+        user = self._create_user()
+        habit = self._create_habit(user, name="reading")
+
+        completion = HabitCompletion(
+            habit_id=habit.id,
+            date_completed=str(date.today()),
+        )
+        db.session.add(completion)
+        db.session.commit()
+
+        with self.app.test_client() as client:
+            client.post(
+                "/login",
+                data={"username": "testuser", "password": "password123"},
+            )
+
+            response = client.get("/profile", follow_redirects=True)
+
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b"Habits Completed", response.data)
+            self.assertIn(b"1", response.data)
+
+    # cat unlock condition works after user meets the requirement
+    def test_cat_unlock_condition_after_requirement_met(self):
+        seed_cats()
+        user = self._create_user()
+
+        for i in range(3):
+            habit = self._create_habit(user, name=f"habit {i}")
+            completion = HabitCompletion(
+                habit_id=habit.id,
+                date_completed=str(date.today()),
+            )
+            db.session.add(completion)
+
+        db.session.commit()
+
+        luna = Cat.query.filter_by(name="Luna").first()
+        self.assertIsNotNone(luna)
+        self.assertTrue(check_unlock_condition(user.id, luna))
+
+    # searching for an existing user returns the correct result
+    def test_search_existing_user(self):
+        self._create_user(username="testuser")
+        self._create_user(username="searchtarget")
+
+        with self.app.test_client() as client:
+            client.post(
+                "/login",
+                data={"username": "testuser", "password": "password123"},
+            )
+
+            response = client.get("/friends/search?q=searchtarget")
+            data = response.get_json()
+
+            self.assertEqual(response.status_code, 200)
+            self.assertIn("searchtarget", str(data).lower())
+
+    # adding the same friend twice is prevented
+    def test_add_same_friend_twice_prevented(self):
+        user1 = self._create_user(username="user1", password="password123")
+        user2 = self._create_user(username="user2", password="password123")
+
+        with self.app.test_client() as client:
+            client.post(
+                "/login",
+                data={
+                    "username": "user1",
+                    "password": "password123",
+                },
+                follow_redirects=True,
+            )
+
+            first_response = client.post(
+                "/friends/add",
+                data={"friend_id": user2.id},
+            )
+
+            first_data = first_response.get_json()
+
+            self.assertEqual(first_response.status_code, 200)
+            self.assertTrue(first_data["success"])
+            self.assertEqual(first_data["message"], "Friend added.")
+
+            second_response = client.post(
+                "/friends/add",
+                data={"friend_id": user2.id},
+            )
+
+            second_data = second_response.get_json()
+
+            self.assertEqual(second_response.status_code, 409)
+            self.assertFalse(second_data["success"])
+            self.assertEqual(
+                second_data["message"],
+                "This user is already your friend."
+            )
+
+            friendships = Friendship.query.filter_by(
+                user_id=user1.id,
+                friend_id=user2.id,
+            ).all()
+
+            self.assertEqual(len(friendships), 1)
+
+    # users cannot add themselves as a friend
+    def test_user_cannot_add_self_as_friend(self):
+        user = self._create_user(username="selfuser")
+
+        with self.app.test_client() as client:
+            client.post(
+                "/login",
+                data={"username": "selfuser", "password": "password123"},
+            )
+
+            response = client.post(
+                "/friends/add",
+                json={"friend_id": user.id},
+            )
+
+            data = response.get_json(silent=True) or {}
+
+            self.assertTrue(
+                response.status_code in [400, 409]
+                or data.get("success") is False
+            )
+
+    # leaderboard ordering is based on streak correctly
+    def test_leaderboard_ordering_by_streak(self):
+        user_high = self._create_user(username="highscore")
+        user_low = self._create_user(username="lowscore")
+
+        # Leaderboard only shows current user and their friends,
+        # so lowscore must be added as highscore's friend.
+        friendship = Friendship(user_id=user_high.id, friend_id=user_low.id)
+        db.session.add(friendship)
+
+        high_habit = self._create_habit(user_high, name="high habit")
+        low_habit = self._create_habit(user_low, name="low habit")
+
+        today = date.today()
+        yesterday = today - timedelta(days=1)
+
+        # highscore has a 2-day streak
+        db.session.add(
+            HabitCompletion(
+                habit_id=high_habit.id,
+                date_completed=str(today),
+            )
+        )
+        db.session.add(
+            HabitCompletion(
+                habit_id=high_habit.id,
+                date_completed=str(yesterday),
+            )
+        )
+
+        # lowscore has a 1-day streak
+        db.session.add(
+            HabitCompletion(
+                habit_id=low_habit.id,
+                date_completed=str(today),
+            )
+        )
+
+        db.session.commit()
+
+        with self.app.test_client() as client:
+            client.post(
+                "/login",
+                data={"username": "highscore", "password": "password123"},
+            )
+
+            response = client.get("/leaderboard", follow_redirects=True)
+            page = response.data.decode().lower()
+
+            self.assertEqual(response.status_code, 200)
+            self.assertIn("highscore", page)
+            self.assertIn("lowscore", page)
+            self.assertLess(page.find("highscore"), page.find("lowscore"))
