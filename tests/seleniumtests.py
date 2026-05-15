@@ -11,6 +11,8 @@ from app import create_app, db
 from app.config import TestConfig
 from app.models import seed_cats, User
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 LOCAL_HOST = "http://127.0.0.1:5000/"
 
@@ -23,6 +25,11 @@ def run_server():
             user = User(username="test")
             user.set_password("1234")
             db.session.add(user)
+            db.session.commit()
+        if not User.query.filter_by(username="friendtarget").first():
+            friend_user = User(username="friendtarget")
+            friend_user.set_password("1234")
+            db.session.add(friend_user)
             db.session.commit()
     app.run(host="127.0.0.1", port=5000, debug=False, use_reloader=False)
 
@@ -424,6 +431,7 @@ class SeleniumTests(unittest.TestCase):
     def test_searching_for_user(self):
         username = f"searchuser{int(time.time())}"
 
+        # create a new user who can be searched
         self.driver.get(LOCAL_HOST + "register")
         self.driver.find_element(By.NAME, "username").send_keys(username)
         self.driver.find_element(By.NAME, "password").send_keys("password")
@@ -431,16 +439,40 @@ class SeleniumTests(unittest.TestCase):
         self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
         time.sleep(1)
 
+        # make sure we are logged out, then log in as the existing test user
+        self.driver.get(LOCAL_HOST + "logout")
+        time.sleep(1)
+
         self._login()
 
+        # search for the new user on the friends page
         self.driver.get(LOCAL_HOST + "friends")
         time.sleep(1)
 
-        self.driver.find_element(By.ID, "friend-search-input").send_keys(username)
-        time.sleep(1)
+        search_input = self.driver.find_element(By.ID, "friend-search-input")
+        search_input.clear()
+        search_input.send_keys(username)
 
-        results = self.driver.find_element(By.ID, "friend-search-results")
-        self.assertIn(username, results.text.lower())
+        # trigger the AJAX search explicitly
+        self.driver.execute_script(
+            "arguments[0].dispatchEvent(new Event('input', { bubbles: true }));",
+            search_input
+        )
+
+        # wait until a matching search result appears
+        def result_contains_username(driver):
+            results = driver.find_elements(By.CSS_SELECTOR, ".friend-search-result")
+            for result in results:
+                try:
+                    if username.lower() in result.text.lower():
+                        return True
+                except:
+                    return False
+            return False
+
+        self.assertTrue(
+            WebDriverWait(self.driver, 10).until(result_contains_username)
+        )
 
     # Checks that adding a friend works
     def test_adding_a_friend(self):
@@ -454,7 +486,7 @@ class SeleniumTests(unittest.TestCase):
         self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
         time.sleep(1)
 
-        # log out from the newly registered user, then log in as the existing test user
+        # make sure we are logged out, then log in as the existing test user
         self.driver.get(LOCAL_HOST + "logout")
         time.sleep(1)
 
@@ -467,23 +499,37 @@ class SeleniumTests(unittest.TestCase):
         search_input = self.driver.find_element(By.ID, "friend-search-input")
         search_input.clear()
         search_input.send_keys(username)
-        time.sleep(2)
 
-        # click the search result to select the user
-        search_results = self.driver.find_elements(By.CSS_SELECTOR, ".friend-search-result")
-        self.assertTrue(len(search_results) > 0, "No friend search results found")
-        self.assertIn(username, search_results[0].text.lower())
-        search_results[0].click()
+        # trigger the AJAX search explicitly
+        self.driver.execute_script(
+            "arguments[0].dispatchEvent(new Event('input', { bubbles: true }));",
+            search_input
+        )
+
+        # wait until the search result is created, re-finding elements each time
+        def find_matching_result(driver):
+            results = driver.find_elements(By.CSS_SELECTOR, ".friend-search-result")
+            for result in results:
+                try:
+                    if username.lower() in result.text.lower():
+                        return result
+                except:
+                    return False
+            return False
+
+        search_result = WebDriverWait(self.driver, 10).until(find_matching_result)
+
+        # click the search result to set selectedUser in friends.js
+        search_result.click()
         time.sleep(0.5)
 
         # add the selected user as a friend
         self.driver.find_element(By.ID, "add-friend-btn").click()
         time.sleep(1)
 
-        # check that the friend was added
         page_text = self.driver.page_source.lower()
         self.assertTrue(
-            "friend added" in page_text or username in page_text
+            "friend added" in page_text or username.lower() in page_text
         )
     
     # Checks that the leaderboard displays users in streak order
