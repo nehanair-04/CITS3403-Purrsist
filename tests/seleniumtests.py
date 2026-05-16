@@ -10,8 +10,7 @@ from selenium.webdriver.common.by import By
 from app import create_app, db
 from app.config import TestConfig
 from app.models import seed_cats, User
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 LOCAL_HOST = "http://127.0.0.1:5000/"
@@ -295,15 +294,15 @@ class SeleniumTests(unittest.TestCase):
         self.driver.find_element(By.ID, "add-habit-btn").click()
         time.sleep(0.5)
 
-        self.driver.find_element(By.NAME, "name").send_keys("edit frequency habit")
+        self.driver.find_element(By.ID, "add-habit-name").send_keys("edit frequency habit")
         self.driver.find_element(By.CSS_SELECTOR, ".add-habit-btn").click()
         time.sleep(1)
 
         self.driver.find_element(By.CSS_SELECTOR, ".edit-btn").click()
         time.sleep(0.5)
 
-        frequency_select = Select(self.driver.find_element(By.ID, "edit-frequency"))
-        frequency_select.select_by_value("weekly")
+        edit_frequency = Select(self.driver.find_element(By.ID, "edit-frequency"))
+        edit_frequency.select_by_value("weekly")
 
         self.driver.find_element(By.ID, "save-edit").click()
         time.sleep(1)
