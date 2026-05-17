@@ -29,7 +29,7 @@
       <div class="habit-list" id="habit-list">
         {% for habit in habits %}
         <div class="habit-card">
-          <p class="habit-text">{{ habit.name }}</p>
+          <p class="habit-text">{{ habit.name | capitalize}}</p>
 
           <button
             class="complete-btn {% if habit.id in completed_ids %}completed{% endif %}"
