@@ -37,8 +37,8 @@ The app uses a pixel art aesthetic with a soft pink and cream colour palette. Ke
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/nehanair-04/CITS3403-Group-Project.git
-cd CITS3403-Group-Project
+git clone https://github.com/nehanair-04/CITS3403-Purrsist.git
+cd CITS3403-Purrsist
 ```
 
 2. Create and activate a virtual environment:
@@ -76,19 +76,19 @@ pip install -r requirements.txt
 macOS/Linux:
 
 ```bash
-export PURRSIST_SECRET_KEY='your-secret-key-here'
+export MYAPP_SECRET_KEY='your-secret-key-here'
 ```
 
 Windows PowerShell:
 
 ```powershell
-$env:PURRSIST_SECRET_KEY="your-secret-key-here"
+$env:MYAPP_SECRET_KEY="your-secret-key-here"
 ```
 
 Windows Command Prompt:
 
 ```cmd
-set PURRSIST_SECRET_KEY=your-secret-key-here
+set MYAPP_SECRET_KEY=your-secret-key-here
 ```
 
 5. Set up the database:
@@ -116,7 +116,7 @@ set FLASK_APP=purrsistapp.py
 Then run the database migration:
 
 ```bash
-flask db upgrade
+flask --app purrsistapp:app db upgrade
 ```
 
 6. Seed the cat data:
@@ -124,7 +124,7 @@ flask db upgrade
 Cat data is automatically seeded when the app starts if no cats exist in the database. If cats are not already seeded, you can manually seed them by running:
 
 ```bash
-flask shell
+flask --app purrsistapp:app shell
 >>> from app.models import seed_cats
 >>> seed_cats()
 >>> exit()
@@ -133,7 +133,7 @@ flask shell
 7. Run the application:
 
 ```bash
-flask run
+flask --app purrsistapp:app run
 ```
 
 8. Open your browser and navigate to `http://127.0.0.1:5000`
